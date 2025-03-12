@@ -63,7 +63,14 @@ dotenv.config()
 
 const localMySqlConnection = process.env.MYSQL_CONNECTION || ''
 
-export interface TuEnv {
+export interface TuEnvFlags {
+  chain: sdk.Chain
+  runMySQL: boolean
+  runSlowTests: boolean
+  logTests: boolean
+}
+
+export interface TuEnv extends TuEnvFlags {
   chain: sdk.Chain
   identityKey: string
   identityKey2: string
@@ -71,9 +78,6 @@ export interface TuEnv {
   bitailsApiKey: string
   whatsonchainApiKey: string
   devKeys: Record<string, string>
-  runMySQL: boolean
-  runSlowTests: boolean
-  logTests: boolean
   /**
    * file path to local sqlite file for identityKey
    */
@@ -92,11 +96,11 @@ export interface TuEnv {
 export abstract class TestUtilsWalletStorage {
   /**
    * @param chain
-   * @returns true if .env is not valid for chain
+   * @returns true if .env has truthy idenityKey, idenityKey2 values for chain
    */
   static noEnv(chain: sdk.Chain): boolean {
     try {
-      _tu.getEnv(chain)
+      Setup.getEnv(chain)
       return false
     } catch {
       return true
@@ -116,7 +120,20 @@ export abstract class TestUtilsWalletStorage {
     }
   }
 
+  static getEnvFlags(chain: sdk.Chain): TuEnvFlags {
+    const logTests = !!process.env.LOGTESTS
+    const runMySQL = !!process.env.RUNMYSQL
+    const runSlowTests = !!process.env.RUNSLOWTESTS
+    return {
+      chain,
+      runMySQL,
+      runSlowTests,
+      logTests
+    }
+  }
+
   static getEnv(chain: sdk.Chain): TuEnv {
+    const flagsEnv = _tu.getEnvFlags(chain)
     // Identity keys of the lead maintainer of this repo...
     const identityKey = (chain === 'main' ? process.env.MY_MAIN_IDENTITY : process.env.MY_TEST_IDENTITY) || ''
     const filePath = chain === 'main' ? process.env.MY_MAIN_FILEPATH : process.env.MY_TEST_FILEPATH
@@ -126,24 +143,18 @@ export abstract class TestUtilsWalletStorage {
     const cloudMySQLConnection =
       chain === 'main' ? process.env.MAIN_CLOUD_MYSQL_CONNECTION : process.env.TEST_CLOUD_MYSQL_CONNECTION
     const DEV_KEYS = process.env.DEV_KEYS || '{}'
-    const logTests = !!process.env.LOGTESTS
-    const runMySQL = !!process.env.RUNMYSQL
-    const runSlowTests = !!process.env.RUNSLOWTESTS
     const taalApiKey = (chain === 'main' ? process.env.MAIN_TAAL_API_KEY : process.env.TEST_TAAL_API_KEY) || ''
     const bitailsApiKey = (chain === 'main' ? process.env.MAIN_BITAILS_API_KEY : process.env.TEST_BITAILS_API_KEY) || ''
     const whatsonchainApiKey =
       (chain === 'main' ? process.env.MAIN_WHATSONCHAIN_API_KEY : process.env.TEST_WHATSONCHAIN_API_KEY) || ''
     return {
-      chain,
+      ...flagsEnv,
       identityKey,
       identityKey2,
       taalApiKey,
       bitailsApiKey,
       whatsonchainApiKey,
       devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
-      runMySQL,
-      runSlowTests,
-      logTests,
       filePath,
       testIdentityKey,
       testFilePath,

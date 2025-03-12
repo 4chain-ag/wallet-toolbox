@@ -5,7 +5,7 @@ import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtils
 describe('internalizeAction tests', () => {
   jest.setTimeout(99999999)
 
-  const env = _tu.getEnv('test')
+  const env = _tu.getEnvFlags('test')
 
   const gctxs: TestWalletNoSetup[] = []
   const useSharedCtxs = true

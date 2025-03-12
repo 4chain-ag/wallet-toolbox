@@ -6,7 +6,7 @@ describe('KnexMigrations tests', () => {
   jest.setTimeout(99999999)
 
   const knexs: Knex[] = []
-  const env = _tu.getEnv('test')
+  const env = _tu.getEnvFlags('test')
 
   beforeAll(async () => {
     const localSQLiteFile = await _tu.newTmpFile('migratetest.sqlite', false, false, true)

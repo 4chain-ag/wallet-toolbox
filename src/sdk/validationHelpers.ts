@@ -56,22 +56,22 @@ export function parseWalletOutpoint(outpoint: string): {
 }
 
 function defaultTrue(v?: boolean) {
-  return v === undefined ? true : v
+  return v ?? true
 }
 function defaultFalse(v?: boolean) {
-  return v === undefined ? false : v
+  return v ?? false
 }
 function defaultZero(v?: number) {
-  return v === undefined ? 0 : v
+  return v ?? 0
 }
 function default0xffffffff(v?: number) {
-  return v === undefined ? 0xffffffff : v
+  return v ?? 0xffffffff
 }
 function defaultOne(v?: number) {
-  return v === undefined ? 1 : v
+  return v ?? 1
 }
 function defaultEmpty<T>(v?: T[]) {
-  return v === undefined ? [] : v
+  return v ?? []
 }
 
 function validateOptionalStringLength(
@@ -168,8 +168,9 @@ function validateOptionalBase64String(
 function validateBase64String(s: string, name: string, min?: number, max?: number): string {
   // Remove any whitespace and check if the string length is valid for Base64
   s = s.trim()
-  const base64Regex = /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/
-  const paddingCount = (s.match(/=+$/) || [])[0]?.length || 0
+  const base64Regex = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/
+  const paddingMatch = /=+$/.exec(s)
+  const paddingCount = paddingMatch ? paddingMatch[0].length : 0
 
   if (paddingCount > 2 || (s.length % 4 !== 0 && paddingCount !== 0) || !base64Regex.test(s)) {
     throw new sdk.WERR_INVALID_PARAMETER(name, `balid base64 string`)
@@ -237,7 +238,7 @@ export function validateCreateActionInput(i: CreateActionInput): ValidCreateActi
   if (i.unlockingScript === undefined && i.unlockingScriptLength === undefined)
     throw new sdk.WERR_INVALID_PARAMETER('unlockingScript, unlockingScriptLength', `at least one valid value.`)
   const unlockingScript = validateOptionalHexString(i.unlockingScript, 'unlockingScript')
-  const unlockingScriptLength = i.unlockingScriptLength || unlockingScript!.length / 2
+  const unlockingScriptLength = i.unlockingScriptLength ?? unlockingScript!.length / 2
   if (unlockingScript && unlockingScriptLength !== unlockingScript.length / 2)
     throw new sdk.WERR_INVALID_PARAMETER('unlockingScriptLength', `length unlockingScript if both valid.`)
   const vi: ValidCreateActionInput = {
@@ -914,7 +915,7 @@ export function validateListOutputsArgs(args: ListOutputsArgs): ValidListOutputs
     includeTags: defaultFalse(args.includeTags),
     includeLabels: defaultFalse(args.includeLabels),
     limit: validateInteger(args.limit, 'limit', 10, 1, 10000),
-    offset: validateInteger(args.offset, 'offset', 0, 0, undefined),
+    offset: validateInteger(args.offset, 'offset', 0, 0),
     seekPermission: defaultTrue(args.seekPermission),
     knownTxids: []
   }
@@ -965,7 +966,7 @@ export function validateListActionsArgs(args: ListActionsArgs): ValidListActions
     includeOutputs: defaultFalse(args.includeOutputs),
     includeOutputLockingScripts: defaultFalse(args.includeOutputLockingScripts),
     limit: validateInteger(args.limit, 'limit', 10, 1, 10000),
-    offset: validateInteger(args.offset, 'offset', 0, 0, undefined),
+    offset: validateInteger(args.offset, 'offset', 0, 0),
     seekPermission: defaultTrue(args.seekPermission)
   }
 

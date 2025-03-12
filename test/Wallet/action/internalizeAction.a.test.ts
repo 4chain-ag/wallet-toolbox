@@ -9,7 +9,7 @@ import { getBeefForTransaction } from '../../../src/storage/methods/getBeefForTr
 describe.skip('internalizeAction tests', () => {
   jest.setTimeout(99999999)
 
-  const env = _tu.getEnv('test')
+  const env = _tu.getEnvFlags('test')
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {

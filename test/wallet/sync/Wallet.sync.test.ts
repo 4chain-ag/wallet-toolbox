@@ -5,7 +5,7 @@ import { _tu, logger, TestWalletNoSetup } from '../../utils/TestUtilsWalletStora
 describe('Wallet sync tests', () => {
   jest.setTimeout(99999999)
 
-  const env = _tu.getEnv('test')
+  const env = _tu.getEnvFlags('test')
 
   beforeAll(async () => {})
 

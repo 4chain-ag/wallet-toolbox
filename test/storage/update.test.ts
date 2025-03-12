@@ -25,7 +25,7 @@ describe('update tests', () => {
   jest.setTimeout(99999999)
 
   const chain: sdk.Chain = 'test'
-  const env = _tu.getEnv(chain)
+  const env = _tu.getEnvFlags(chain)
   const testName = () => expect.getState().currentTestName || 'test'
 
   let storages: StorageProvider[]

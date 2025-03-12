@@ -2,7 +2,7 @@ import * as bsv from '@bsv/sdk'
 import { sdk, StorageProvider } from '../../../src/index.client'
 import { _tu, expectToThrowWERR, MockData, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
-const env = _tu.getEnv('test')
+const env = _tu.getEnvFlags('test')
 const testName = () => expect.getState().currentTestName || 'test'
 
 describe('listActions2 single action tests', () => {

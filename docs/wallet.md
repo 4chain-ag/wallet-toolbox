@@ -13,56 +13,61 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | | |
 | --- | --- | --- |
-| [ArcConfig](#interface-arcconfig) | [PendingStorageInput](#interface-pendingstorageinput) | [TableSyncState](#interface-tablesyncstate) |
-| [ArcMinerGetTxData](#interface-arcminergettxdata) | [PostBeefResult](#interface-postbeefresult) | [TableTransaction](#interface-tabletransaction) |
-| [AuthId](#interface-authid) | [PostBeefResultForTxidApi](#interface-postbeefresultfortxidapi) | [TableTxLabel](#interface-tabletxlabel) |
-| [BaseBlockHeader](#interface-baseblockheader) | [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails) | [TableTxLabelMap](#interface-tabletxlabelmap) |
-| [BitailsConfig](#interface-bitailsconfig) | [PostReqsToNetworkResult](#interface-postreqstonetworkresult) | [TableUser](#interface-tableuser) |
-| [BitailsMerkleProof](#interface-bitailsmerkleproof) | [PostTxResultForTxid](#interface-posttxresultfortxid) | [TaskPurgeParams](#interface-taskpurgeparams) |
-| [BlockHeader](#interface-blockheader) | [PostTxResultForTxidError](#interface-posttxresultfortxiderror) | [TrxToken](#interface-trxtoken) |
-| [BsvExchangeRate](#interface-bsvexchangerate) | [PostTxsResult](#interface-posttxsresult) | [TscMerkleProofApi](#interface-tscmerkleproofapi) |
-| [CertOpsWallet](#interface-certopswallet) | [ProcessSyncChunkResult](#interface-processsyncchunkresult) | [TxScriptOffsets](#interface-txscriptoffsets) |
-| [CommitNewTxResults](#interface-commitnewtxresults) | [ProvenOrRawTx](#interface-provenorrawtx) | [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs) |
-| [EntitySyncMap](#interface-entitysyncmap) | [ProvenTxFromTxidResult](#interface-proventxfromtxidresult) | [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult) |
-| [EntityTimeStamp](#interface-entitytimestamp) | [ProvenTxReqHistory](#interface-proventxreqhistory) | [ValidAbortActionArgs](#interface-validabortactionargs) |
-| [ExchangeRatesIoApi](#interface-exchangeratesioapi) | [ProvenTxReqHistorySummaryApi](#interface-proventxreqhistorysummaryapi) | [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs) |
-| [FiatExchangeRates](#interface-fiatexchangerates) | [ProvenTxReqNotify](#interface-proventxreqnotify) | [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs) |
-| [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs) | [PurgeParams](#interface-purgeparams) | [ValidAcquireIssuanceCertificateArgs](#interface-validacquireissuancecertificateargs) |
-| [FindCertificatesArgs](#interface-findcertificatesargs) | [PurgeResults](#interface-purgeresults) | [ValidBasketInsertion](#interface-validbasketinsertion) |
-| [FindCommissionsArgs](#interface-findcommissionsargs) | [RequestSyncChunkArgs](#interface-requestsyncchunkargs) | [ValidCreateActionArgs](#interface-validcreateactionargs) |
-| [FindForUserSincePagedArgs](#interface-findforusersincepagedargs) | [ScriptTemplateParamsBRC29](#interface-scripttemplateparamsbrc29) | [ValidCreateActionInput](#interface-validcreateactioninput) |
-| [FindMonitorEventsArgs](#interface-findmonitoreventsargs) | [ScriptTemplateUnlock](#interface-scripttemplateunlock) | [ValidCreateActionOptions](#interface-validcreateactionoptions) |
-| [FindOutputBasketsArgs](#interface-findoutputbasketsargs) | [StorageCreateActionResult](#interface-storagecreateactionresult) | [ValidCreateActionOutput](#interface-validcreateactionoutput) |
-| [FindOutputTagMapsArgs](#interface-findoutputtagmapsargs) | [StorageCreateTransactionSdkInput](#interface-storagecreatetransactionsdkinput) | [ValidDiscoverByAttributesArgs](#interface-validdiscoverbyattributesargs) |
-| [FindOutputTagsArgs](#interface-findoutputtagsargs) | [StorageCreateTransactionSdkOutput](#interface-storagecreatetransactionsdkoutput) | [ValidDiscoverByIdentityKeyArgs](#interface-validdiscoverbyidentitykeyargs) |
-| [FindOutputsArgs](#interface-findoutputsargs) | [StorageFeeModel](#interface-storagefeemodel) | [ValidInternalizeActionArgs](#interface-validinternalizeactionargs) |
-| [FindPartialSincePagedArgs](#interface-findpartialsincepagedargs) | [StorageGetBeefOptions](#interface-storagegetbeefoptions) | [ValidInternalizeOutput](#interface-validinternalizeoutput) |
-| [FindProvenTxReqsArgs](#interface-findproventxreqsargs) | [StorageIdentity](#interface-storageidentity) | [ValidListActionsArgs](#interface-validlistactionsargs) |
-| [FindProvenTxsArgs](#interface-findproventxsargs) | [StorageInternalizeActionResult](#interface-storageinternalizeactionresult) | [ValidListCertificatesArgs](#interface-validlistcertificatesargs) |
-| [FindSincePagedArgs](#interface-findsincepagedargs) | [StorageProcessActionArgs](#interface-storageprocessactionargs) | [ValidListOutputsArgs](#interface-validlistoutputsargs) |
-| [FindSyncStatesArgs](#interface-findsyncstatesargs) | [StorageProcessActionResults](#interface-storageprocessactionresults) | [ValidProcessActionArgs](#interface-validprocessactionargs) |
-| [FindTransactionsArgs](#interface-findtransactionsargs) | [StorageProvenOrReq](#interface-storageprovenorreq) | [ValidProcessActionOptions](#interface-validprocessactionoptions) |
-| [FindTxLabelMapsArgs](#interface-findtxlabelmapsargs) | [StorageProviderOptions](#interface-storageprovideroptions) | [ValidProveCertificateArgs](#interface-validprovecertificateargs) |
-| [FindTxLabelsArgs](#interface-findtxlabelsargs) | [StorageReaderOptions](#interface-storagereaderoptions) | [ValidRelinquishCertificateArgs](#interface-validrelinquishcertificateargs) |
-| [FindUsersArgs](#interface-findusersargs) | [StorageReaderWriterOptions](#interface-storagereaderwriteroptions) | [ValidRelinquishOutputArgs](#interface-validrelinquishoutputargs) |
-| [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput) | [StorageSyncReaderOptions](#interface-storagesyncreaderoptions) | [ValidSignActionArgs](#interface-validsignactionargs) |
-| [GenerateChangeSdkChangeOutput](#interface-generatechangesdkchangeoutput) | [SyncChunk](#interface-syncchunk) | [ValidSignActionOptions](#interface-validsignactionoptions) |
-| [GenerateChangeSdkInput](#interface-generatechangesdkinput) | [SyncError](#interface-syncerror) | [ValidWalletPayment](#interface-validwalletpayment) |
-| [GenerateChangeSdkOutput](#interface-generatechangesdkoutput) | [SyncMap](#interface-syncmap) | [ValidWalletSignerArgs](#interface-validwalletsignerargs) |
-| [GenerateChangeSdkParams](#interface-generatechangesdkparams) | [TableCertificate](#interface-tablecertificate) | [ValidateGenerateChangeSdkParamsResult](#interface-validategeneratechangesdkparamsresult) |
-| [GenerateChangeSdkResult](#interface-generatechangesdkresult) | [TableCertificateField](#interface-tablecertificatefield) | [WalletArgs](#interface-walletargs) |
-| [GenerateChangeSdkStorageChange](#interface-generatechangesdkstoragechange) | [TableCertificateX](#interface-tablecertificatex) | [WalletBalance](#interface-walletbalance) |
-| [GetMerklePathResult](#interface-getmerklepathresult) | [TableCommission](#interface-tablecommission) | [WalletServices](#interface-walletservices) |
-| [GetRawTxResult](#interface-getrawtxresult) | [TableMonitorEvent](#interface-tablemonitorevent) | [WalletServicesOptions](#interface-walletservicesoptions) |
-| [GetReqsAndBeefDetail](#interface-getreqsandbeefdetail) | [TableOutput](#interface-tableoutput) | [WalletSigner](#interface-walletsigner) |
-| [GetReqsAndBeefResult](#interface-getreqsandbeefresult) | [TableOutputBasket](#interface-tableoutputbasket) | [WalletStorage](#interface-walletstorage) |
-| [GetUtxoStatusDetails](#interface-getutxostatusdetails) | [TableOutputTag](#interface-tableoutputtag) | [WalletStorageProvider](#interface-walletstorageprovider) |
-| [GetUtxoStatusResult](#interface-getutxostatusresult) | [TableOutputTagMap](#interface-tableoutputtagmap) | [WalletStorageReader](#interface-walletstoragereader) |
-| [KeyPair](#interface-keypair) | [TableOutputX](#interface-tableoutputx) | [WalletStorageSync](#interface-walletstoragesync) |
-| [MonitorOptions](#interface-monitoroptions) | [TableProvenTx](#interface-tableproventx) | [WalletStorageSyncReader](#interface-walletstoragesyncreader) |
-| [OutPoint](#interface-outpoint) | [TableProvenTxReq](#interface-tableproventxreq) | [WalletStorageWriter](#interface-walletstoragewriter) |
-| [Paged](#interface-paged) | [TableProvenTxReqDynamics](#interface-tableproventxreqdynamics) | [XValidCreateActionOutput](#interface-xvalidcreateactionoutput) |
-| [PendingSignAction](#interface-pendingsignaction) | [TableSettings](#interface-tablesettings) |  |
+| [ArcConfig](#interface-arcconfig) | [PermissionRequest](#interface-permissionrequest) | [TableTxLabel](#interface-tabletxlabel) |
+| [ArcMinerGetTxData](#interface-arcminergettxdata) | [PermissionToken](#interface-permissiontoken) | [TableTxLabelMap](#interface-tabletxlabelmap) |
+| [AuthId](#interface-authid) | [PermissionsManagerConfig](#interface-permissionsmanagerconfig) | [TableUser](#interface-tableuser) |
+| [AuthPayload](#interface-authpayload) | [PostBeefResult](#interface-postbeefresult) | [TaskPurgeParams](#interface-taskpurgeparams) |
+| [BaseBlockHeader](#interface-baseblockheader) | [PostBeefResultForTxidApi](#interface-postbeefresultfortxidapi) | [TrustSettings](#interface-trustsettings) |
+| [BitailsConfig](#interface-bitailsconfig) | [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails) | [TrxToken](#interface-trxtoken) |
+| [BitailsMerkleProof](#interface-bitailsmerkleproof) | [PostReqsToNetworkResult](#interface-postreqstonetworkresult) | [TscMerkleProofApi](#interface-tscmerkleproofapi) |
+| [BlockHeader](#interface-blockheader) | [PostTxResultForTxid](#interface-posttxresultfortxid) | [TxScriptOffsets](#interface-txscriptoffsets) |
+| [BsvExchangeRate](#interface-bsvexchangerate) | [PostTxResultForTxidError](#interface-posttxresultfortxiderror) | [UMPToken](#interface-umptoken) |
+| [CertOpsWallet](#interface-certopswallet) | [PostTxsResult](#interface-posttxsresult) | [UMPTokenInteractor](#interface-umptokeninteractor) |
+| [Certifier](#interface-certifier) | [ProcessSyncChunkResult](#interface-processsyncchunkresult) | [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs) |
+| [CommitNewTxResults](#interface-commitnewtxresults) | [ProvenOrRawTx](#interface-provenorrawtx) | [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult) |
+| [CompleteAuthResponse](#interface-completeauthresponse) | [ProvenTxFromTxidResult](#interface-proventxfromtxidresult) | [ValidAbortActionArgs](#interface-validabortactionargs) |
+| [EntitySyncMap](#interface-entitysyncmap) | [ProvenTxReqHistory](#interface-proventxreqhistory) | [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs) |
+| [EntityTimeStamp](#interface-entitytimestamp) | [ProvenTxReqHistorySummaryApi](#interface-proventxreqhistorysummaryapi) | [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs) |
+| [ExchangeRatesIoApi](#interface-exchangeratesioapi) | [ProvenTxReqNotify](#interface-proventxreqnotify) | [ValidAcquireIssuanceCertificateArgs](#interface-validacquireissuancecertificateargs) |
+| [ExtendedVerifiableCertificate](#interface-extendedverifiablecertificate) | [PurgeParams](#interface-purgeparams) | [ValidBasketInsertion](#interface-validbasketinsertion) |
+| [FiatExchangeRates](#interface-fiatexchangerates) | [PurgeResults](#interface-purgeresults) | [ValidCreateActionArgs](#interface-validcreateactionargs) |
+| [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs) | [RequestSyncChunkArgs](#interface-requestsyncchunkargs) | [ValidCreateActionInput](#interface-validcreateactioninput) |
+| [FindCertificatesArgs](#interface-findcertificatesargs) | [ScriptTemplateParamsBRC29](#interface-scripttemplateparamsbrc29) | [ValidCreateActionOptions](#interface-validcreateactionoptions) |
+| [FindCommissionsArgs](#interface-findcommissionsargs) | [ScriptTemplateUnlock](#interface-scripttemplateunlock) | [ValidCreateActionOutput](#interface-validcreateactionoutput) |
+| [FindForUserSincePagedArgs](#interface-findforusersincepagedargs) | [StartAuthResponse](#interface-startauthresponse) | [ValidDiscoverByAttributesArgs](#interface-validdiscoverbyattributesargs) |
+| [FindMonitorEventsArgs](#interface-findmonitoreventsargs) | [StorageCreateActionResult](#interface-storagecreateactionresult) | [ValidDiscoverByIdentityKeyArgs](#interface-validdiscoverbyidentitykeyargs) |
+| [FindOutputBasketsArgs](#interface-findoutputbasketsargs) | [StorageCreateTransactionSdkInput](#interface-storagecreatetransactionsdkinput) | [ValidInternalizeActionArgs](#interface-validinternalizeactionargs) |
+| [FindOutputTagMapsArgs](#interface-findoutputtagmapsargs) | [StorageCreateTransactionSdkOutput](#interface-storagecreatetransactionsdkoutput) | [ValidInternalizeOutput](#interface-validinternalizeoutput) |
+| [FindOutputTagsArgs](#interface-findoutputtagsargs) | [StorageFeeModel](#interface-storagefeemodel) | [ValidListActionsArgs](#interface-validlistactionsargs) |
+| [FindOutputsArgs](#interface-findoutputsargs) | [StorageGetBeefOptions](#interface-storagegetbeefoptions) | [ValidListCertificatesArgs](#interface-validlistcertificatesargs) |
+| [FindPartialSincePagedArgs](#interface-findpartialsincepagedargs) | [StorageIdentity](#interface-storageidentity) | [ValidListOutputsArgs](#interface-validlistoutputsargs) |
+| [FindProvenTxReqsArgs](#interface-findproventxreqsargs) | [StorageInternalizeActionResult](#interface-storageinternalizeactionresult) | [ValidProcessActionArgs](#interface-validprocessactionargs) |
+| [FindProvenTxsArgs](#interface-findproventxsargs) | [StorageProcessActionArgs](#interface-storageprocessactionargs) | [ValidProcessActionOptions](#interface-validprocessactionoptions) |
+| [FindSincePagedArgs](#interface-findsincepagedargs) | [StorageProcessActionResults](#interface-storageprocessactionresults) | [ValidProveCertificateArgs](#interface-validprovecertificateargs) |
+| [FindSyncStatesArgs](#interface-findsyncstatesargs) | [StorageProvenOrReq](#interface-storageprovenorreq) | [ValidRelinquishCertificateArgs](#interface-validrelinquishcertificateargs) |
+| [FindTransactionsArgs](#interface-findtransactionsargs) | [StorageProviderOptions](#interface-storageprovideroptions) | [ValidRelinquishOutputArgs](#interface-validrelinquishoutputargs) |
+| [FindTxLabelMapsArgs](#interface-findtxlabelmapsargs) | [StorageReaderOptions](#interface-storagereaderoptions) | [ValidSignActionArgs](#interface-validsignactionargs) |
+| [FindTxLabelsArgs](#interface-findtxlabelsargs) | [StorageReaderWriterOptions](#interface-storagereaderwriteroptions) | [ValidSignActionOptions](#interface-validsignactionoptions) |
+| [FindUsersArgs](#interface-findusersargs) | [StorageSyncReaderOptions](#interface-storagesyncreaderoptions) | [ValidWalletPayment](#interface-validwalletpayment) |
+| [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput) | [SyncChunk](#interface-syncchunk) | [ValidWalletSignerArgs](#interface-validwalletsignerargs) |
+| [GenerateChangeSdkChangeOutput](#interface-generatechangesdkchangeoutput) | [SyncError](#interface-syncerror) | [ValidateGenerateChangeSdkParamsResult](#interface-validategeneratechangesdkparamsresult) |
+| [GenerateChangeSdkInput](#interface-generatechangesdkinput) | [SyncMap](#interface-syncmap) | [WalletArgs](#interface-walletargs) |
+| [GenerateChangeSdkOutput](#interface-generatechangesdkoutput) | [TableCertificate](#interface-tablecertificate) | [WalletBalance](#interface-walletbalance) |
+| [GenerateChangeSdkParams](#interface-generatechangesdkparams) | [TableCertificateField](#interface-tablecertificatefield) | [WalletPermissionsManagerCallbacks](#interface-walletpermissionsmanagercallbacks) |
+| [GenerateChangeSdkResult](#interface-generatechangesdkresult) | [TableCertificateX](#interface-tablecertificatex) | [WalletServices](#interface-walletservices) |
+| [GenerateChangeSdkStorageChange](#interface-generatechangesdkstoragechange) | [TableCommission](#interface-tablecommission) | [WalletServicesOptions](#interface-walletservicesoptions) |
+| [GetMerklePathResult](#interface-getmerklepathresult) | [TableMonitorEvent](#interface-tablemonitorevent) | [WalletSettings](#interface-walletsettings) |
+| [GetRawTxResult](#interface-getrawtxresult) | [TableOutput](#interface-tableoutput) | [WalletSettingsManagerConfig](#interface-walletsettingsmanagerconfig) |
+| [GetReqsAndBeefDetail](#interface-getreqsandbeefdetail) | [TableOutputBasket](#interface-tableoutputbasket) | [WalletSigner](#interface-walletsigner) |
+| [GetReqsAndBeefResult](#interface-getreqsandbeefresult) | [TableOutputTag](#interface-tableoutputtag) | [WalletStorage](#interface-walletstorage) |
+| [GetUtxoStatusDetails](#interface-getutxostatusdetails) | [TableOutputTagMap](#interface-tableoutputtagmap) | [WalletStorageProvider](#interface-walletstorageprovider) |
+| [GetUtxoStatusResult](#interface-getutxostatusresult) | [TableOutputX](#interface-tableoutputx) | [WalletStorageReader](#interface-walletstoragereader) |
+| [KeyPair](#interface-keypair) | [TableProvenTx](#interface-tableproventx) | [WalletStorageSync](#interface-walletstoragesync) |
+| [MonitorOptions](#interface-monitoroptions) | [TableProvenTxReq](#interface-tableproventxreq) | [WalletStorageSyncReader](#interface-walletstoragesyncreader) |
+| [OutPoint](#interface-outpoint) | [TableProvenTxReqDynamics](#interface-tableproventxreqdynamics) | [WalletStorageWriter](#interface-walletstoragewriter) |
+| [Paged](#interface-paged) | [TableSettings](#interface-tablesettings) | [WalletTheme](#interface-wallettheme) |
+| [PendingSignAction](#interface-pendingsignaction) | [TableSyncState](#interface-tablesyncstate) | [XValidCreateActionOutput](#interface-xvalidcreateactionoutput) |
+| [PendingStorageInput](#interface-pendingstorageinput) | [TableTransaction](#interface-tabletransaction) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -161,6 +166,22 @@ export interface AuthId {
     identityKey: string;
     userId?: number;
     isActive?: boolean;
+}
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: AuthPayload
+
+AuthMethodInteractor
+
+A base interface/class for client-side logic to interact with a server
+for a specific Auth Method's flow (start, complete).
+
+```ts
+export interface AuthPayload {
+    [key: string]: any;
 }
 ```
 
@@ -336,6 +357,22 @@ export interface CertOpsWallet {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Interface: Certifier
+
+```ts
+export interface Certifier {
+    name: string;
+    description: string;
+    identityKey: PubKeyHex;
+    trust: number;
+    iconUrl?: string;
+    baseURL?: string;
+}
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Interface: CommitNewTxResults
 
 ```ts
@@ -346,6 +383,19 @@ export interface CommitNewTxResults {
 ```
 
 See also: [EntityProvenTxReq](./storage.md#class-entityproventxreq)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: CompleteAuthResponse
+
+```ts
+export interface CompleteAuthResponse {
+    success: boolean;
+    message?: string;
+    presentationKey?: string;
+}
+```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -414,6 +464,18 @@ export interface ExchangeRatesIoApi {
     base: "EUR" | "USD";
     date: string;
     rates: Record<string, number>;
+}
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: ExtendedVerifiableCertificate
+
+```ts
+export interface ExtendedVerifiableCertificate extends IdentityCertificate {
+    certifierInfo: IdentityCertifier;
+    publiclyRevealedKeyring: Record<string, Base64String>;
 }
 ```
 
@@ -1194,6 +1256,411 @@ export interface PendingStorageInput {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Interface: PermissionRequest
+
+Describes a single requested permission that the user must either grant or deny.
+
+Four categories of permission are supported, each with a unique protocol:
+ 1) protocol - "DPACP" (Domain Protocol Access Control Protocol)
+ 2) basket   - "DBAP"  (Domain Basket Access Protocol)
+ 3) certificate - "DCAP" (Domain Certificate Access Protocol)
+ 4) spending - "DSAP"  (Domain Spending Authorization Protocol)
+
+This model underpins "requests" made to the user for permission, which the user can
+either grant or deny. The manager can then create on-chain tokens (PushDrop outputs)
+if permission is granted. Denying requests cause the underlying operation to throw,
+and no token is created. An "ephemeral" grant is also possible, denoting a one-time
+authorization without an associated persistent on-chain token.
+
+```ts
+export interface PermissionRequest {
+    type: "protocol" | "basket" | "certificate" | "spending";
+    originator: string;
+    privileged?: boolean;
+    protocolID?: [
+        0 | 1 | 2,
+        string
+    ];
+    counterparty?: string;
+    basket?: string;
+    certificate?: {
+        verifier: string;
+        certType: string;
+        fields: string[];
+    };
+    spending?: {
+        satoshis: number;
+        lineItems?: Array<{
+            type: "input" | "output" | "fee";
+            description: string;
+            satoshis: number;
+        }>;
+    };
+    reason?: string;
+    renewal?: boolean;
+    previousToken?: PermissionToken;
+}
+```
+
+See also: [PermissionToken](./client.md#interface-permissiontoken)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: PermissionToken
+
+Data structure representing an on-chain permission token.
+It is typically stored as a single unspent PushDrop output in a special "internal" admin basket belonging to
+the user, held in their underlying wallet.
+
+It can represent any of the four permission categories by having the relevant fields:
+ - DPACP: originator, privileged, protocol, securityLevel, counterparty
+ - DBAP:  originator, basketName
+ - DCAP:  originator, privileged, verifier, certType, certFields
+ - DSAP:  originator, authorizedAmount
+
+```ts
+export interface PermissionToken {
+    txid: string;
+    outputIndex: number;
+    outputScript: string;
+    satoshis: number;
+    originator: string;
+    expiry: number;
+    privileged?: boolean;
+    protocol?: string;
+    securityLevel?: 0 | 1 | 2;
+    counterparty?: string;
+    basketName?: string;
+    certType?: string;
+    certFields?: string[];
+    verifier?: string;
+    authorizedAmount?: number;
+}
+```
+
+###### Property authorizedAmount
+
+For DSAP, the maximum authorized spending for the month.
+
+```ts
+authorizedAmount?: number
+```
+
+###### Property basketName
+
+The name of a basket, if this is a DBAP token.
+
+```ts
+basketName?: string
+```
+
+###### Property certFields
+
+The certificate fields that this token covers, if DCAP token.
+
+```ts
+certFields?: string[]
+```
+
+###### Property certType
+
+The certificate type, if this is a DCAP token.
+
+```ts
+certType?: string
+```
+
+###### Property counterparty
+
+The counterparty, for DPACP.
+
+```ts
+counterparty?: string
+```
+
+###### Property expiry
+
+The expiration time for this token in UNIX epoch seconds. (0 or omitted for spending authorizations, which are indefinite)
+
+```ts
+expiry: number
+```
+
+###### Property originator
+
+The originator domain or FQDN that is allowed to use this permission.
+
+```ts
+originator: string
+```
+
+###### Property outputIndex
+
+The output index within that transaction.
+
+```ts
+outputIndex: number
+```
+
+###### Property outputScript
+
+The exact script hex for the locking script.
+
+```ts
+outputScript: string
+```
+
+###### Property privileged
+
+Whether this token grants privileged usage (for protocol or certificate).
+
+```ts
+privileged?: boolean
+```
+
+###### Property protocol
+
+The protocol name, if this is a DPACP token.
+
+```ts
+protocol?: string
+```
+
+###### Property satoshis
+
+The amount of satoshis assigned to the permission output (often 1).
+
+```ts
+satoshis: number
+```
+
+###### Property securityLevel
+
+The security level (0,1,2) for DPACP.
+
+```ts
+securityLevel?: 0 | 1 | 2
+```
+
+###### Property txid
+
+The transaction ID where this token resides.
+
+```ts
+txid: string
+```
+
+###### Property verifier
+
+The "verifier" public key string, if DCAP.
+
+```ts
+verifier?: string
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: PermissionsManagerConfig
+
+Configuration object for the WalletPermissionsManager. If a given option is `false`,
+the manager will skip or alter certain permission checks or behaviors.
+
+By default, all of these are `true` unless specified otherwise. This is the most secure configuration.
+
+```ts
+export interface PermissionsManagerConfig {
+    seekProtocolPermissionsForSigning?: boolean;
+    seekProtocolPermissionsForEncrypting?: boolean;
+    seekProtocolPermissionsForHMAC?: boolean;
+    seekPermissionsForKeyLinkageRevelation?: boolean;
+    seekPermissionsForPublicKeyRevelation?: boolean;
+    seekPermissionsForIdentityKeyRevelation?: boolean;
+    seekPermissionsForIdentityResolution?: boolean;
+    seekBasketInsertionPermissions?: boolean;
+    seekBasketRemovalPermissions?: boolean;
+    seekBasketListingPermissions?: boolean;
+    seekPermissionWhenApplyingActionLabels?: boolean;
+    seekPermissionWhenListingActionsByLabel?: boolean;
+    seekCertificateDisclosurePermissions?: boolean;
+    seekCertificateAcquisitionPermissions?: boolean;
+    seekCertificateRelinquishmentPermissions?: boolean;
+    seekCertificateListingPermissions?: boolean;
+    encryptWalletMetadata?: boolean;
+    seekSpendingPermissions?: boolean;
+    differentiatePrivilegedOperations?: boolean;
+}
+```
+
+###### Property differentiatePrivilegedOperations
+
+If false, permissions are checked without regard for whether we are in
+privileged mode. Privileged status is ignored with respect to whether
+permissions are granted. Internally, they are always sought and checked
+with privileged=false, regardless of the actual value.
+
+```ts
+differentiatePrivilegedOperations?: boolean
+```
+
+###### Property encryptWalletMetadata
+
+Should transaction descriptions, input descriptions, and output descriptions be encrypted
+when before they are passed to the underlying wallet, and transparently decrypted when retrieved?
+
+```ts
+encryptWalletMetadata?: boolean
+```
+
+###### Property seekBasketInsertionPermissions
+
+When we do internalizeAction with `basket insertion`, or include outputs in baskets
+with `createAction, do we ask for basket permission?
+
+```ts
+seekBasketInsertionPermissions?: boolean
+```
+
+###### Property seekBasketListingPermissions
+
+When listOutputs is called, do we ask for basket permission?
+
+```ts
+seekBasketListingPermissions?: boolean
+```
+
+###### Property seekBasketRemovalPermissions
+
+When relinquishOutput is called, do we ask for basket permission?
+
+```ts
+seekBasketRemovalPermissions?: boolean
+```
+
+###### Property seekCertificateAcquisitionPermissions
+
+If acquiring a certificate (acquireCertificate), do we require a permission check?
+
+```ts
+seekCertificateAcquisitionPermissions?: boolean
+```
+
+###### Property seekCertificateDisclosurePermissions
+
+If proving a certificate (proveCertificate) or revealing certificate fields,
+do we require a "certificate access" permission?
+
+```ts
+seekCertificateDisclosurePermissions?: boolean
+```
+
+###### Property seekCertificateListingPermissions
+
+If listing a user's certificates (listCertificates), do we require a permission check?
+
+```ts
+seekCertificateListingPermissions?: boolean
+```
+
+###### Property seekCertificateRelinquishmentPermissions
+
+If relinquishing a certificate (relinquishCertificate), do we require a permission check?
+
+```ts
+seekCertificateRelinquishmentPermissions?: boolean
+```
+
+###### Property seekPermissionWhenApplyingActionLabels
+
+When createAction is called with labels, do we ask for "label usage" permission?
+
+```ts
+seekPermissionWhenApplyingActionLabels?: boolean
+```
+
+###### Property seekPermissionWhenListingActionsByLabel
+
+When listActions is called with labels, do we ask for "label usage" permission?
+
+```ts
+seekPermissionWhenListingActionsByLabel?: boolean
+```
+
+###### Property seekPermissionsForIdentityKeyRevelation
+
+If getPublicKey is requested with `identityKey=true`, do we require permission?
+
+```ts
+seekPermissionsForIdentityKeyRevelation?: boolean
+```
+
+###### Property seekPermissionsForIdentityResolution
+
+If discoverByIdentityKey / discoverByAttributes are called, do we require permission
+for "identity resolution" usage?
+
+```ts
+seekPermissionsForIdentityResolution?: boolean
+```
+
+###### Property seekPermissionsForKeyLinkageRevelation
+
+For revealing counterparty-level or specific key linkage revelation information,
+should we require permission?
+
+```ts
+seekPermissionsForKeyLinkageRevelation?: boolean
+```
+
+###### Property seekPermissionsForPublicKeyRevelation
+
+For revealing any user public key (getPublicKey) **other** than the identity key,
+should we require permission?
+
+```ts
+seekPermissionsForPublicKeyRevelation?: boolean
+```
+
+###### Property seekProtocolPermissionsForEncrypting
+
+For methods that perform encryption (encrypt/decrypt), require
+a "protocol usage" permission check?
+
+```ts
+seekProtocolPermissionsForEncrypting?: boolean
+```
+
+###### Property seekProtocolPermissionsForHMAC
+
+For methods that perform HMAC creation or verification (createHmac, verifyHmac),
+require a "protocol usage" permission check?
+
+```ts
+seekProtocolPermissionsForHMAC?: boolean
+```
+
+###### Property seekProtocolPermissionsForSigning
+
+For `createSignature` and `verifySignature`,
+require a "protocol usage" permission check?
+
+```ts
+seekProtocolPermissionsForSigning?: boolean
+```
+
+###### Property seekSpendingPermissions
+
+If the originator tries to spend wallet funds (netSpent > 0 in createAction),
+do we seek spending authorization?
+
+```ts
+seekSpendingPermissions?: boolean
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Interface: PostBeefResult
 
 ```ts
@@ -1650,6 +2117,19 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export interface ScriptTemplateUnlock {
     sign: (tx: Transaction, inputIndex: number) => Promise<UnlockingScript>;
     estimateLength: (tx: Transaction, inputIndex: number) => Promise<number>;
+}
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: StartAuthResponse
+
+```ts
+export interface StartAuthResponse {
+    success: boolean;
+    message?: string;
+    data?: any;
 }
 ```
 
@@ -2659,6 +3139,20 @@ See also: [PurgeParams](./client.md#interface-purgeparams)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Interface: TrustSettings
+
+```ts
+export interface TrustSettings {
+    trustLevel: number;
+    trustedCertifiers: Certifier[];
+}
+```
+
+See also: [Certifier](./client.md#interface-certifier)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Interface: TrxToken
 
 Place holder for the transaction control object used by actual storage provider implementation.
@@ -2700,6 +3194,172 @@ export interface TxScriptOffsets {
     }[];
 }
 ```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: UMPToken
+
+Describes the structure of a User Management Protocol (UMP) token.
+
+```ts
+export interface UMPToken {
+    passwordPresentationPrimary: number[];
+    passwordRecoveryPrimary: number[];
+    presentationRecoveryPrimary: number[];
+    passwordPrimaryPrivileged: number[];
+    presentationRecoveryPrivileged: number[];
+    presentationHash: number[];
+    passwordSalt: number[];
+    recoveryHash: number[];
+    presentationKeyEncrypted: number[];
+    recoveryKeyEncrypted: number[];
+    passwordKeyEncrypted: number[];
+    currentOutpoint?: OutpointString;
+}
+```
+
+###### Property currentOutpoint
+
+Describes the token's location on-chain, if it's already been published.
+
+```ts
+currentOutpoint?: OutpointString
+```
+
+###### Property passwordKeyEncrypted
+
+A copy of the password key encrypted with the privileged key.
+
+```ts
+passwordKeyEncrypted: number[]
+```
+
+###### Property passwordPresentationPrimary
+
+Primary key encrypted by the XOR of the password and presentation keys.
+
+```ts
+passwordPresentationPrimary: number[]
+```
+
+###### Property passwordPrimaryPrivileged
+
+Privileged key encrypted by the XOR of the password and primary keys.
+
+```ts
+passwordPrimaryPrivileged: number[]
+```
+
+###### Property passwordRecoveryPrimary
+
+Primary key encrypted by the XOR of the password and recovery keys.
+
+```ts
+passwordRecoveryPrimary: number[]
+```
+
+###### Property passwordSalt
+
+PBKDF2 salt used in conjunction with the password to derive the password key.
+
+```ts
+passwordSalt: number[]
+```
+
+###### Property presentationHash
+
+Hash of the presentation key.
+
+```ts
+presentationHash: number[]
+```
+
+###### Property presentationKeyEncrypted
+
+A copy of the presentation key encrypted with the privileged key.
+
+```ts
+presentationKeyEncrypted: number[]
+```
+
+###### Property presentationRecoveryPrimary
+
+Primary key encrypted by the XOR of the presentation and recovery keys.
+
+```ts
+presentationRecoveryPrimary: number[]
+```
+
+###### Property presentationRecoveryPrivileged
+
+Privileged key encrypted by the XOR of the presentation and recovery keys.
+
+```ts
+presentationRecoveryPrivileged: number[]
+```
+
+###### Property recoveryHash
+
+Hash of the recovery key.
+
+```ts
+recoveryHash: number[]
+```
+
+###### Property recoveryKeyEncrypted
+
+A copy of the recovery key encrypted with the privileged key.
+
+```ts
+recoveryKeyEncrypted: number[]
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: UMPTokenInteractor
+
+Describes a system capable of finding and updating UMP tokens on the blockchain.
+
+```ts
+export interface UMPTokenInteractor {
+    findByPresentationKeyHash: (hash: number[]) => Promise<UMPToken | undefined>;
+    findByRecoveryKeyHash: (hash: number[]) => Promise<UMPToken | undefined>;
+    buildAndSend: (wallet: WalletInterface, adminOriginator: OriginatorDomainNameStringUnder250Bytes, token: UMPToken, oldTokenToConsume?: UMPToken) => Promise<OutpointString>;
+}
+```
+
+See also: [UMPToken](./client.md#interface-umptoken)
+
+###### Property buildAndSend
+
+Creates (and optionally consumes the previous version of) a UMP token on-chain.
+
+```ts
+buildAndSend: (wallet: WalletInterface, adminOriginator: OriginatorDomainNameStringUnder250Bytes, token: UMPToken, oldTokenToConsume?: UMPToken) => Promise<OutpointString>
+```
+See also: [UMPToken](./client.md#interface-umptoken)
+
+###### Property findByPresentationKeyHash
+
+Locates the latest valid copy of a UMP token (including its outpoint)
+based on the presentation key hash.
+
+```ts
+findByPresentationKeyHash: (hash: number[]) => Promise<UMPToken | undefined>
+```
+See also: [UMPToken](./client.md#interface-umptoken)
+
+###### Property findByRecoveryKeyHash
+
+Locates the latest valid copy of a UMP token (including its outpoint)
+based on the recovery key hash.
+
+```ts
+findByRecoveryKeyHash: (hash: number[]) => Promise<UMPToken | undefined>
+```
+See also: [UMPToken](./client.md#interface-umptoken)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3233,10 +3893,12 @@ export interface WalletArgs {
     services?: sdk.WalletServices;
     monitor?: Monitor;
     privilegedKeyManager?: sdk.PrivilegedKeyManager;
+    settingsManager?: WalletSettingsManager;
+    lookupResolver?: LookupResolver;
 }
 ```
 
-See also: [Chain](./client.md#type-chain), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [WalletServices](./client.md#interface-walletservices), [WalletStorageManager](./storage.md#class-walletstoragemanager)
+See also: [Chain](./client.md#type-chain), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [WalletServices](./client.md#interface-walletservices), [WalletSettingsManager](./client.md#class-walletsettingsmanager), [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3252,6 +3914,25 @@ export interface WalletBalance {
     }[];
 }
 ```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: WalletPermissionsManagerCallbacks
+
+The set of callbacks that external code can bind to, e.g. to display UI prompts or logs
+when a permission is requested.
+
+```ts
+export interface WalletPermissionsManagerCallbacks {
+    onProtocolPermissionRequested?: PermissionEventHandler[];
+    onBasketAccessRequested?: PermissionEventHandler[];
+    onCertificateAccessRequested?: PermissionEventHandler[];
+    onSpendingAuthorizationRequested?: PermissionEventHandler[];
+}
+```
+
+See also: [PermissionEventHandler](./client.md#type-permissioneventhandler)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3482,6 +4163,34 @@ See also: [ArcConfig](./services.md#interface-arcconfig), [BsvExchangeRate](./cl
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Interface: WalletSettings
+
+```ts
+export interface WalletSettings {
+    trustSettings: TrustSettings;
+    theme?: WalletTheme;
+    currency?: string;
+}
+```
+
+See also: [TrustSettings](./client.md#interface-trustsettings), [WalletTheme](./client.md#interface-wallettheme)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: WalletSettingsManagerConfig
+
+```ts
+export interface WalletSettingsManagerConfig {
+    defaultSettings: WalletSettings;
+}
+```
+
+See also: [WalletSettings](./client.md#interface-walletsettings)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Interface: WalletSigner
 
 ```ts
@@ -3671,6 +4380,17 @@ See also: [AuthId](./client.md#interface-authid), [StorageCreateActionResult](./
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Interface: WalletTheme
+
+```ts
+export interface WalletTheme {
+    mode: string;
+}
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Interface: XValidCreateActionOutput
 
 ```ts
@@ -3692,25 +4412,28 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | | |
 | --- | --- | --- |
-| [ARC](#class-arc) | [Monitor](#class-monitor) | [WERR_BAD_REQUEST](#class-werr_bad_request) |
-| [Bitails](#class-bitails) | [PrivilegedKeyManager](#class-privilegedkeymanager) | [WERR_BROADCAST_UNAVAILABLE](#class-werr_broadcast_unavailable) |
-| [CertOps](#class-certops) | [ScriptTemplateBRC29](#class-scripttemplatebrc29) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) |
-| [EntityBase](#class-entitybase) | [SdkWhatsOnChain](#class-sdkwhatsonchain) | [WERR_INTERNAL](#class-werr_internal) |
-| [EntityCertificate](#class-entitycertificate) | [ServiceCollection](#class-servicecollection) | [WERR_INVALID_OPERATION](#class-werr_invalid_operation) |
-| [EntityCertificateField](#class-entitycertificatefield) | [Services](#class-services) | [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter) |
-| [EntityCommission](#class-entitycommission) | [StorageClient](#class-storageclient) | [WERR_INVALID_PUBLIC_KEY](#class-werr_invalid_public_key) |
-| [EntityOutput](#class-entityoutput) | [StorageProvider](#class-storageprovider) | [WERR_MISSING_PARAMETER](#class-werr_missing_parameter) |
-| [EntityOutputBasket](#class-entityoutputbasket) | [StorageReader](#class-storagereader) | [WERR_NETWORK_CHAIN](#class-werr_network_chain) |
-| [EntityOutputTag](#class-entityoutputtag) | [StorageReaderWriter](#class-storagereaderwriter) | [WERR_NOT_ACTIVE](#class-werr_not_active) |
-| [EntityOutputTagMap](#class-entityoutputtagmap) | [StorageSyncReader](#class-storagesyncreader) | [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented) |
-| [EntityProvenTx](#class-entityproventx) | [TaskCheckForProofs](#class-taskcheckforproofs) | [WERR_UNAUTHORIZED](#class-werr_unauthorized) |
-| [EntityProvenTxReq](#class-entityproventxreq) | [TaskClock](#class-taskclock) | [Wallet](#class-wallet) |
+| [ARC](#class-arc) | [PersonaIDInteractor](#class-personaidinteractor) | [WERR_BAD_REQUEST](#class-werr_bad_request) |
+| [AuthMethodInteractor](#class-authmethodinteractor) | [PrivilegedKeyManager](#class-privilegedkeymanager) | [WERR_BROADCAST_UNAVAILABLE](#class-werr_broadcast_unavailable) |
+| [Bitails](#class-bitails) | [ScriptTemplateBRC29](#class-scripttemplatebrc29) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) |
+| [CWIStyleWalletManager](#class-cwistylewalletmanager) | [SdkWhatsOnChain](#class-sdkwhatsonchain) | [WERR_INTERNAL](#class-werr_internal) |
+| [EntityBase](#class-entitybase) | [ServiceCollection](#class-servicecollection) | [WERR_INVALID_OPERATION](#class-werr_invalid_operation) |
+| [EntityCertificate](#class-entitycertificate) | [Services](#class-services) | [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter) |
+| [EntityCertificateField](#class-entitycertificatefield) | [SimpleWalletManager](#class-simplewalletmanager) | [WERR_INVALID_PUBLIC_KEY](#class-werr_invalid_public_key) |
+| [EntityCommission](#class-entitycommission) | [StorageClient](#class-storageclient) | [WERR_MISSING_PARAMETER](#class-werr_missing_parameter) |
+| [EntityOutput](#class-entityoutput) | [StorageProvider](#class-storageprovider) | [WERR_NETWORK_CHAIN](#class-werr_network_chain) |
+| [EntityOutputBasket](#class-entityoutputbasket) | [StorageReader](#class-storagereader) | [WERR_NOT_ACTIVE](#class-werr_not_active) |
+| [EntityOutputTag](#class-entityoutputtag) | [StorageReaderWriter](#class-storagereaderwriter) | [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented) |
+| [EntityOutputTagMap](#class-entityoutputtagmap) | [StorageSyncReader](#class-storagesyncreader) | [WERR_UNAUTHORIZED](#class-werr_unauthorized) |
+| [EntityProvenTx](#class-entityproventx) | [TaskCheckForProofs](#class-taskcheckforproofs) | [Wallet](#class-wallet) |
+| [EntityProvenTxReq](#class-entityproventxreq) | [TaskClock](#class-taskclock) | [WalletAuthenticationManager](#class-walletauthenticationmanager) |
 | [EntitySyncState](#class-entitysyncstate) | [TaskFailAbandoned](#class-taskfailabandoned) | [WalletError](#class-walleterror) |
 | [EntityTransaction](#class-entitytransaction) | [TaskNewHeader](#class-tasknewheader) | [WalletMonitorTask](#class-walletmonitortask) |
-| [EntityTxLabel](#class-entitytxlabel) | [TaskPurge](#class-taskpurge) | [WalletSigner](#class-walletsigner) |
-| [EntityTxLabelMap](#class-entitytxlabelmap) | [TaskReviewStatus](#class-taskreviewstatus) | [WalletStorageManager](#class-walletstoragemanager) |
-| [EntityUser](#class-entityuser) | [TaskSendWaiting](#class-tasksendwaiting) | [WhatsOnChain](#class-whatsonchain) |
-| [MergeEntity](#class-mergeentity) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) |  |
+| [EntityTxLabel](#class-entitytxlabel) | [TaskPurge](#class-taskpurge) | [WalletPermissionsManager](#class-walletpermissionsmanager) |
+| [EntityTxLabelMap](#class-entitytxlabelmap) | [TaskReviewStatus](#class-taskreviewstatus) | [WalletSettingsManager](#class-walletsettingsmanager) |
+| [EntityUser](#class-entityuser) | [TaskSendWaiting](#class-tasksendwaiting) | [WalletSigner](#class-walletsigner) |
+| [MergeEntity](#class-mergeentity) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) | [WalletStorageManager](#class-walletstoragemanager) |
+| [Monitor](#class-monitor) | [TwilioPhoneInteractor](#class-twiliophoneinteractor) | [WhatsOnChain](#class-whatsonchain) |
+| [OverlayUMPTokenInteractor](#class-overlayumptokeninteractor) | [WABClient](#class-wabclient) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3809,6 +4532,41 @@ See also: [PostTxResultForTxid](./client.md#interface-posttxresultfortxid)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Class: AuthMethodInteractor
+
+Abstract client-side interactor for an Auth Method
+
+```ts
+export abstract class AuthMethodInteractor {
+    public abstract methodType: string;
+    public abstract startAuth(serverUrl: string, presentationKey: string, payload: AuthPayload): Promise<StartAuthResponse>;
+    public abstract completeAuth(serverUrl: string, presentationKey: string, payload: AuthPayload): Promise<CompleteAuthResponse>;
+}
+```
+
+See also: [AuthPayload](./client.md#interface-authpayload), [CompleteAuthResponse](./client.md#interface-completeauthresponse), [StartAuthResponse](./client.md#interface-startauthresponse)
+
+###### Method completeAuth
+
+Complete the flow (e.g. confirm OTP).
+
+```ts
+public abstract completeAuth(serverUrl: string, presentationKey: string, payload: AuthPayload): Promise<CompleteAuthResponse>
+```
+See also: [AuthPayload](./client.md#interface-authpayload), [CompleteAuthResponse](./client.md#interface-completeauthresponse)
+
+###### Method startAuth
+
+Start the flow (e.g. request an OTP or create a session).
+
+```ts
+public abstract startAuth(serverUrl: string, presentationKey: string, payload: AuthPayload): Promise<StartAuthResponse>
+```
+See also: [AuthPayload](./client.md#interface-authpayload), [StartAuthResponse](./client.md#interface-startauthresponse)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Class: Bitails
 
 ```ts
@@ -3853,88 +4611,278 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-##### Class: CertOps
+##### Class: CWIStyleWalletManager
+
+Manages a "CWI-style" wallet that uses a UMP token and a
+multi-key authentication scheme (password, presentation key, and recovery key).
 
 ```ts
-export class CertOps extends BsvCertificate {
-    _keyring?: Record<CertificateFieldNameUnder50Bytes, string>;
-    _encryptedFields?: Record<CertificateFieldNameUnder50Bytes, Base64String>;
-    _decryptedFields?: Record<CertificateFieldNameUnder50Bytes, string>;
-    constructor(public wallet: CertOpsWallet, wc: WalletCertificate) 
-    static async fromCounterparty(wallet: CertOpsWallet, e: {
-        certificate: WalletCertificate;
-        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
-        counterparty: PubKeyHex;
-    }): Promise<CertOps> 
-    static async fromCertifier(wallet: CertOpsWallet, e: {
-        certificate: WalletCertificate;
-        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
-    }): Promise<CertOps> 
-    static async fromEncrypted(wallet: CertOpsWallet, wc: WalletCertificate, keyring: Record<CertificateFieldNameUnder50Bytes, string>): Promise<CertOps> 
-    static async fromDecrypted(wallet: CertOpsWallet, wc: WalletCertificate): Promise<CertOps> 
-    static copyFields<T>(fields: Record<CertificateFieldNameUnder50Bytes, T>): Record<CertificateFieldNameUnder50Bytes, T> 
-    static getProtocolForCertificateFieldEncryption(serialNumber: string, fieldName: string): {
-        protocolID: WalletProtocol;
-        keyID: string;
-    } 
-    exportForSubject(): {
-        certificate: WalletCertificate;
-        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
-    } 
-    toWalletCertificate(): WalletCertificate 
-    async encryptFields(counterparty: "self" | PubKeyHex = "self"): Promise<{
-        fields: Record<CertificateFieldNameUnder50Bytes, string>;
-        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
-    }> 
-    async decryptFields(counterparty?: PubKeyHex, keyring?: Record<CertificateFieldNameUnder50Bytes, string>): Promise<Record<CertificateFieldNameUnder50Bytes, string>> 
-    async exportForCounterparty(counterparty: PubKeyHex, fieldsToReveal: CertificateFieldNameUnder50Bytes[]): Promise<{
-        certificate: WalletCertificate;
-        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
-        counterparty: PubKeyHex;
-    }> 
-    async createKeyringForVerifier(verifierIdentityKey: PubKeyHex, fieldsToReveal: CertificateFieldNameUnder50Bytes[]): Promise<Record<CertificateFieldNameUnder50Bytes, Base64String>> 
-    async encryptAndSignNewCertificate(): Promise<void> 
+export class CWIStyleWalletManager implements WalletInterface {
+    authenticated: boolean;
+    authenticationMode: "presentation-key-and-password" | "presentation-key-and-recovery-key" | "recovery-key-and-password" = "presentation-key-and-password";
+    authenticationFlow: "new-user" | "existing-user" = "new-user";
+    constructor(adminOriginator: OriginatorDomainNameStringUnder250Bytes, walletBuilder: (primaryKey: number[], privilegedKeyManager: PrivilegedKeyManager) => Promise<WalletInterface>, interactor: UMPTokenInteractor = new OverlayUMPTokenInteractor(), recoveryKeySaver: (key: number[]) => Promise<true>, passwordRetriever: (reason: string, test: (passwordCandidate: string) => boolean) => Promise<string>, newWalletFunder?: (presentationKey: number[], wallet: WalletInterface, adminOriginator: OriginatorDomainNameStringUnder250Bytes) => Promise<void>, stateSnapshot?: number[]) 
+    async providePresentationKey(key: number[]): Promise<void> 
+    async providePassword(password: string): Promise<void> 
+    async provideRecoveryKey(recoveryKey: number[]): Promise<void> 
+    saveSnapshot(): number[] 
+    async loadSnapshot(snapshot: number[]): Promise<void> 
+    destroy(): void 
+    async changePassword(newPassword: string): Promise<void> 
+    async getRecoveryKey(): Promise<number[]> 
+    async changeRecoveryKey(): Promise<void> 
+    async changePresentationKey(presentationKey: number[]): Promise<void> 
+    async getPublicKey(args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetPublicKeyResult> 
+    async revealCounterpartyKeyLinkage(args: RevealCounterpartyKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RevealCounterpartyKeyLinkageResult> 
+    async revealSpecificKeyLinkage(args: RevealSpecificKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RevealSpecificKeyLinkageResult> 
+    async encrypt(args: WalletEncryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletEncryptResult> 
+    async decrypt(args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletDecryptResult> 
+    async createHmac(args: CreateHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateHmacResult> 
+    async verifyHmac(args: VerifyHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<VerifyHmacResult> 
+    async createSignature(args: CreateSignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateSignatureResult> 
+    async verifySignature(args: VerifySignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<VerifySignatureResult> 
+    async createAction(args: CreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateActionResult> 
+    async signAction(args: SignActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<SignActionResult> 
+    async abortAction(args: AbortActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AbortActionResult> 
+    async listActions(args: ListActionsArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListActionsResult> 
+    async internalizeAction(args: InternalizeActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<InternalizeActionResult> 
+    async listOutputs(args: ListOutputsArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListOutputsResult> 
+    async relinquishOutput(args: RelinquishOutputArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RelinquishOutputResult> 
+    async acquireCertificate(args: AcquireCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AcquireCertificateResult> 
+    async listCertificates(args: ListCertificatesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListCertificatesResult> 
+    async proveCertificate(args: ProveCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ProveCertificateResult> 
+    async relinquishCertificate(args: RelinquishCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RelinquishCertificateResult> 
+    async discoverByIdentityKey(args: DiscoverByIdentityKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<DiscoverCertificatesResult> 
+    async discoverByAttributes(args: DiscoverByAttributesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<DiscoverCertificatesResult> 
+    async isAuthenticated(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AuthenticatedResult> 
+    async waitForAuthentication(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AuthenticatedResult> 
+    async getHeight(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetHeightResult> 
+    async getHeaderForHeight(args: GetHeaderArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetHeaderResult> 
+    async getNetwork(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetNetworkResult> 
+    async getVersion(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetVersionResult> 
 }
 ```
 
-See also: [CertOpsWallet](./client.md#interface-certopswallet)
+See also: [OverlayUMPTokenInteractor](./client.md#class-overlayumptokeninteractor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [UMPTokenInteractor](./client.md#interface-umptokeninteractor), [createAction](./storage.md#function-createaction), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [proveCertificate](./client.md#function-provecertificate), [signAction](./client.md#function-signaction)
 
-###### Method createKeyringForVerifier
+###### Constructor
 
-Creates a verifiable certificate structure for a specific verifier, allowing them access to specified fields.
-This method decrypts the master field keys for each field specified in `fieldsToReveal` and re-encrypts them
-for the verifier's identity key. The resulting certificate structure includes only the fields intended to be
-revealed and a verifier-specific keyring for field decryption.
+Constructs a new CWIStyleWalletManager.
 
 ```ts
-async createKeyringForVerifier(verifierIdentityKey: PubKeyHex, fieldsToReveal: CertificateFieldNameUnder50Bytes[]): Promise<Record<CertificateFieldNameUnder50Bytes, Base64String>> 
+constructor(adminOriginator: OriginatorDomainNameStringUnder250Bytes, walletBuilder: (primaryKey: number[], privilegedKeyManager: PrivilegedKeyManager) => Promise<WalletInterface>, interactor: UMPTokenInteractor = new OverlayUMPTokenInteractor(), recoveryKeySaver: (key: number[]) => Promise<true>, passwordRetriever: (reason: string, test: (passwordCandidate: string) => boolean) => Promise<string>, newWalletFunder?: (presentationKey: number[], wallet: WalletInterface, adminOriginator: OriginatorDomainNameStringUnder250Bytes) => Promise<void>, stateSnapshot?: number[]) 
+```
+See also: [OverlayUMPTokenInteractor](./client.md#class-overlayumptokeninteractor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [UMPTokenInteractor](./client.md#interface-umptokeninteractor)
+
+Argument Details
+
++ **adminOriginator**
+  + The domain name of the administrative originator.
++ **walletBuilder**
+  + A function that can build an underlying wallet instance
+from a primary key and a privileged key manager
++ **interactor**
+  + An instance of UMPTokenInteractor capable of managing UMP tokens.
++ **recoveryKeySaver**
+  + A function that can persist or display a newly generated recovery key.
++ **passwordRetriever**
+  + A function to request the user's password, given a reason and a test function.
++ **newWalletFunder**
+  + An optional function called with the presentation key and a new Wallet post-construction to fund it before use.
++ **stateSnapshot**
+  + If provided, a previously saved snapshot of the wallet's state.
+
+###### Property authenticated
+
+Whether the user is currently authenticated.
+
+```ts
+authenticated: boolean
+```
+
+###### Property authenticationFlow
+
+Indicates whether this is a new user or an existing user flow:
+ - 'new-user'
+ - 'existing-user'
+
+```ts
+authenticationFlow: "new-user" | "existing-user" = "new-user"
+```
+
+###### Property authenticationMode
+
+The current mode of authentication:
+ - 'presentation-key-and-password'
+ - 'presentation-key-and-recovery-key'
+ - 'recovery-key-and-password'
+
+```ts
+authenticationMode: "presentation-key-and-password" | "presentation-key-and-recovery-key" | "recovery-key-and-password" = "presentation-key-and-password"
+```
+
+###### Method changePassword
+
+Changes the user's password, re-wrapping the primary and privileged keys with the new password factor.
+
+```ts
+async changePassword(newPassword: string): Promise<void> 
+```
+
+Argument Details
+
++ **newPassword**
+  + The user's new password as a string.
+
+Throws
+
+If the user is not authenticated, or if underlying token references are missing.
+
+###### Method changePresentationKey
+
+Changes the user's presentation key.
+
+```ts
+async changePresentationKey(presentationKey: number[]): Promise<void> 
+```
+
+Argument Details
+
++ **presentationKey**
+  + The new presentation key (32 bytes).
+
+Throws
+
+If the user is not authenticated, or if underlying token references are missing.
+
+###### Method changeRecoveryKey
+
+Changes the user's recovery key, prompting the user to save the new key.
+
+```ts
+async changeRecoveryKey(): Promise<void> 
+```
+
+Throws
+
+If the user is not authenticated, or if underlying token references are missing.
+
+###### Method destroy
+
+Destroys the underlying wallet, returning to a default state
+
+```ts
+destroy(): void 
+```
+
+###### Method getRecoveryKey
+
+Retrieves the current recovery key.
+
+```ts
+async getRecoveryKey(): Promise<number[]> 
+```
+
+Throws
+
+If the user is not authenticated, or if underlying token references are missing.
+
+###### Method loadSnapshot
+
+Loads a previously saved state snapshot (e.g. from `saveSnapshot`).
+Upon success, the wallet becomes authenticated without needing to re-enter keys.
+
+```ts
+async loadSnapshot(snapshot: number[]): Promise<void> 
+```
+
+Argument Details
+
++ **snapshot**
+  + An array of bytes that was previously produced by `saveSnapshot`.
+
+Throws
+
+If the snapshot format is invalid or decryption fails.
+
+###### Method providePassword
+
+Provides the password in an authentication mode that requires it.
+
+- **Existing user**:
+  Decrypts the primary key using the provided password (and either the presentation key or recovery key, depending on the mode).
+  Then builds the underlying wallet, marking the user as authenticated.
+
+- **New user**:
+  Generates a new UMP token with fresh keys (primary, privileged, recovery). Publishes it on-chain and builds the wallet.
+
+```ts
+async providePassword(password: string): Promise<void> 
+```
+
+Argument Details
+
++ **password**
+  + The user's password as a string.
+
+Throws
+
+If the user is already authenticated, if the mode does not use a password, or if required keys are missing.
+
+###### Method providePresentationKey
+
+Provides the presentation key in an authentication mode that requires it.
+If a UMP token is found based on the key's hash, this is an existing-user flow.
+Otherwise, it is treated as a new-user flow.
+
+```ts
+async providePresentationKey(key: number[]): Promise<void> 
+```
+
+Argument Details
+
++ **key**
+  + The user's presentation key (32 bytes).
+
+Throws
+
+if user is already authenticated, or if the current mode does not require a presentation key.
+
+###### Method provideRecoveryKey
+
+Provides the recovery key in an authentication flow that requires it.
+
+```ts
+async provideRecoveryKey(recoveryKey: number[]): Promise<void> 
+```
+
+Argument Details
+
++ **recoveryKey**
+  + The user's recovery key (32 bytes).
+
+Throws
+
+if user is already authenticated, if the mode does not use a recovery key,
+or if a required presentation key is missing in "presentation-key-and-recovery-key" mode.
+
+###### Method saveSnapshot
+
+Saves the current wallet state (including the current UMP token and primary key)
+into an encrypted snapshot. This snapshot can be stored locally and later passed
+to `loadSnapshot` to restore the wallet state without re-authenticating manually.
+
+```ts
+saveSnapshot(): number[] 
 ```
 
 Returns
 
-- A new certificate structure containing the original encrypted fields, the verifier-specific field decryption keyring, and essential certificate metadata.
-
-Argument Details
-
-+ **verifierIdentityKey**
-  + The public identity key of the verifier who will receive access to the specified fields.
-+ **fieldsToReveal**
-  + An array of field names to be revealed to the verifier. Must be a subset of the certificate's fields.
+An array of bytes representing the encrypted snapshot.
 
 Throws
 
-Throws an error if:
-- fieldsToReveal is empty or a field in `fieldsToReveal` does not exist in the certificate.
-- The decrypted master field key fails to decrypt the corresponding field (indicating an invalid key).
-
-###### Method encryptAndSignNewCertificate
-
-encrypt plaintext field values for the subject
-update the signature using the certifier's private key.
-
-```ts
-async encryptAndSignNewCertificate(): Promise<void> 
-```
+if no primary key or token is currently set.
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5077,6 +6025,117 @@ See also: [BlockHeader](./client.md#interface-blockheader)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Class: OverlayUMPTokenInteractor
+
+```ts
+export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
+    constructor(resolver: LookupResolver = new LookupResolver(), broadcaster: SHIPBroadcaster = new SHIPBroadcaster(["tm_users"])) 
+    public async findByPresentationKeyHash(hash: number[]): Promise<UMPToken | undefined> 
+    public async findByRecoveryKeyHash(hash: number[]): Promise<UMPToken | undefined> 
+    public async buildAndSend(wallet: WalletInterface, adminOriginator: OriginatorDomainNameStringUnder250Bytes, token: UMPToken, oldTokenToConsume?: UMPToken): Promise<OutpointString> 
+}
+```
+
+See also: [UMPToken](./client.md#interface-umptoken), [UMPTokenInteractor](./client.md#interface-umptokeninteractor)
+
+###### Constructor
+
+Construct a new OverlayUMPTokenInteractor.
+
+```ts
+constructor(resolver: LookupResolver = new LookupResolver(), broadcaster: SHIPBroadcaster = new SHIPBroadcaster(["tm_users"])) 
+```
+
+Argument Details
+
++ **resolver**
+  + A LookupResolver instance for performing overlay queries (ls_users).
++ **broadcaster**
+  + A SHIPBroadcaster instance for sharing new or updated tokens across the `tm_users` overlay.
+
+###### Method buildAndSend
+
+Creates or updates (replaces) a UMP token on-chain. If `oldTokenToConsume` is provided,
+it is spent in the same transaction that creates the new token output. The new token is
+then broadcast and published under the `tm_users` topic using a SHIP broadcast, ensuring
+overlay participants see the updated token.
+
+```ts
+public async buildAndSend(wallet: WalletInterface, adminOriginator: OriginatorDomainNameStringUnder250Bytes, token: UMPToken, oldTokenToConsume?: UMPToken): Promise<OutpointString> 
+```
+See also: [UMPToken](./client.md#interface-umptoken)
+
+Returns
+
+The outpoint of the newly created UMP token (e.g. "abcd1234...ef.0").
+
+Argument Details
+
++ **wallet**
+  + The wallet used to build and sign the transaction.
++ **adminOriginator**
+  + The domain/FQDN of the administrative originator (wallet operator).
++ **token**
+  + The new UMPToken to create on-chain.
++ **oldTokenToConsume**
+  + Optionally, an existing token to consume/spend in the same transaction.
+
+###### Method findByPresentationKeyHash
+
+Finds a UMP token on-chain by the given presentation key hash, if it exists.
+Uses the ls_users overlay service to perform the lookup.
+
+```ts
+public async findByPresentationKeyHash(hash: number[]): Promise<UMPToken | undefined> 
+```
+See also: [UMPToken](./client.md#interface-umptoken)
+
+Returns
+
+A UMPToken object (including currentOutpoint) if found, otherwise undefined.
+
+Argument Details
+
++ **hash**
+  + The 32-byte SHA-256 hash of the presentation key.
+
+###### Method findByRecoveryKeyHash
+
+Finds a UMP token on-chain by the given recovery key hash, if it exists.
+Uses the ls_users overlay service to perform the lookup.
+
+```ts
+public async findByRecoveryKeyHash(hash: number[]): Promise<UMPToken | undefined> 
+```
+See also: [UMPToken](./client.md#interface-umptoken)
+
+Returns
+
+A UMPToken object (including currentOutpoint) if found, otherwise undefined.
+
+Argument Details
+
++ **hash**
+  + The 32-byte SHA-256 hash of the recovery key.
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Class: PersonaIDInteractor
+
+```ts
+export class PersonaIDInteractor extends AuthMethodInteractor {
+    public methodType = "PersonaID";
+    public async startAuth(serverUrl: string, presentationKey: string, payload: AuthPayload): Promise<StartAuthResponse> 
+    public async completeAuth(serverUrl: string, presentationKey: string, payload: AuthPayload): Promise<CompleteAuthResponse> 
+}
+```
+
+See also: [AuthMethodInteractor](./client.md#class-authmethodinteractor), [AuthPayload](./client.md#interface-authpayload), [CompleteAuthResponse](./client.md#interface-completeauthresponse), [StartAuthResponse](./client.md#interface-startauthresponse)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Class: PrivilegedKeyManager
 
 PrivilegedKeyManager
@@ -5270,6 +6329,228 @@ export class Services implements sdk.WalletServices {
 ```
 
 See also: [ARC](./services.md#class-arc), [Bitails](./services.md#class-bitails), [BlockHeader](./client.md#interface-blockheader), [Chain](./client.md#type-chain), [FiatExchangeRates](./client.md#interface-fiatexchangerates), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetMerklePathService](./client.md#type-getmerklepathservice), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetRawTxService](./client.md#type-getrawtxservice), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [GetUtxoStatusService](./client.md#type-getutxostatusservice), [PostBeefResult](./client.md#interface-postbeefresult), [PostBeefService](./client.md#type-postbeefservice), [ServiceCollection](./services.md#class-servicecollection), [UpdateFiatExchangeRateService](./client.md#type-updatefiatexchangerateservice), [WalletServices](./client.md#interface-walletservices), [WalletServicesOptions](./client.md#interface-walletservicesoptions), [WhatsOnChain](./services.md#class-whatsonchain)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Class: SimpleWalletManager
+
+SimpleWalletManager is a slimmed-down wallet manager that only requires two things to authenticate:
+ 1. A primary key (32 bytes), which represents the core secret for the wallet.
+ 2. A privileged key manager (an instance of `PrivilegedKeyManager`), responsible for
+    more sensitive operations.
+
+Once both pieces are provided (or if a snapshot containing the primary key is loaded,
+and the privileged key manager is provided separately), the wallet becomes authenticated.
+
+After authentication, calls to the standard wallet methods (`createAction`, `signAction`, etc.)
+are proxied to an underlying `WalletInterface` instance returned by a user-supplied `walletBuilder`.
+
+**Important**: This manager does not handle user password flows, recovery, or on-chain
+token management. It is a straightforward wrapper that ensures the user has provided
+both their main secret (primary key) and a privileged key manager before allowing usage.
+
+It also prevents calls from the special "admin originator" from being used externally.
+(Any call that tries to use the admin originator as its originator, other than the manager itself,
+will result in an error, ensuring that only internal operations can use that originator.)
+
+The manager can also save and load snapshots of its state. In this simplified version,
+the snapshot only contains the primary key. If you load a snapshot, you still need to
+re-provide the privileged key manager to complete authentication.
+
+```ts
+export class SimpleWalletManager implements WalletInterface {
+    authenticated: boolean;
+    constructor(adminOriginator: OriginatorDomainNameStringUnder250Bytes, walletBuilder: (primaryKey: number[], privilegedKeyManager: PrivilegedKeyManager) => Promise<WalletInterface>, stateSnapshot?: number[]) 
+    async providePrimaryKey(key: number[]): Promise<void> 
+    async providePrivilegedKeyManager(manager: PrivilegedKeyManager): Promise<void> 
+    destroy(): void 
+    saveSnapshot(): number[] 
+    async loadSnapshot(snapshot: number[]): Promise<void> 
+    async isAuthenticated(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AuthenticatedResult> 
+    async waitForAuthentication(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AuthenticatedResult> 
+    async getPublicKey(args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetPublicKeyResult> 
+    async revealCounterpartyKeyLinkage(args: RevealCounterpartyKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RevealCounterpartyKeyLinkageResult> 
+    async revealSpecificKeyLinkage(args: RevealSpecificKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RevealSpecificKeyLinkageResult> 
+    async encrypt(args: WalletEncryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletEncryptResult> 
+    async decrypt(args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletDecryptResult> 
+    async createHmac(args: CreateHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateHmacResult> 
+    async verifyHmac(args: VerifyHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<VerifyHmacResult> 
+    async createSignature(args: CreateSignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateSignatureResult> 
+    async verifySignature(args: VerifySignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<VerifySignatureResult> 
+    async createAction(args: CreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateActionResult> 
+    async signAction(args: SignActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<SignActionResult> 
+    async abortAction(args: AbortActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AbortActionResult> 
+    async listActions(args: ListActionsArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListActionsResult> 
+    async internalizeAction(args: InternalizeActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<InternalizeActionResult> 
+    async listOutputs(args: ListOutputsArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListOutputsResult> 
+    async relinquishOutput(args: RelinquishOutputArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RelinquishOutputResult> 
+    async acquireCertificate(args: AcquireCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AcquireCertificateResult> 
+    async listCertificates(args: ListCertificatesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListCertificatesResult> 
+    async proveCertificate(args: ProveCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ProveCertificateResult> 
+    async relinquishCertificate(args: RelinquishCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RelinquishCertificateResult> 
+    async discoverByIdentityKey(args: DiscoverByIdentityKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<DiscoverCertificatesResult> 
+    async discoverByAttributes(args: DiscoverByAttributesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<DiscoverCertificatesResult> 
+    async getHeight(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetHeightResult> 
+    async getHeaderForHeight(args: GetHeaderArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetHeaderResult> 
+    async getNetwork(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetNetworkResult> 
+    async getVersion(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetVersionResult> 
+}
+```
+
+See also: [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [createAction](./storage.md#function-createaction), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [proveCertificate](./client.md#function-provecertificate), [signAction](./client.md#function-signaction)
+
+###### Constructor
+
+Constructs a new `SimpleWalletManager`.
+
+```ts
+constructor(adminOriginator: OriginatorDomainNameStringUnder250Bytes, walletBuilder: (primaryKey: number[], privilegedKeyManager: PrivilegedKeyManager) => Promise<WalletInterface>, stateSnapshot?: number[]) 
+```
+See also: [PrivilegedKeyManager](./client.md#class-privilegedkeymanager)
+
+Argument Details
+
++ **adminOriginator**
+  + The domain name of the administrative originator.
++ **walletBuilder**
+  + A function that, given a primary key and privileged key manager,
+returns a fully functional `WalletInterface`.
++ **stateSnapshot**
+  + If provided, a previously saved snapshot of the wallet's state.
+If the snapshot contains a primary key, it will be loaded immediately
+(though you will still need to provide a privileged key manager to authenticate).
+
+###### Property authenticated
+
+Whether the user is currently authenticated (meaning both the primary key
+and privileged key manager have been provided).
+
+```ts
+authenticated: boolean
+```
+
+###### Method destroy
+
+Destroys the underlying wallet, returning to a default (unauthenticated) state.
+
+This clears the primary key, the privileged key manager, and the `authenticated` flag.
+
+```ts
+destroy(): void 
+```
+
+###### Method isAuthenticated
+
+Returns whether the user is currently authenticated (the wallet has a primary key
+and a privileged key manager). If not authenticated, an error is thrown.
+
+```ts
+async isAuthenticated(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AuthenticatedResult> 
+```
+
+Argument Details
+
++ **_**
+  + Not used in this manager.
++ **originator**
+  + The originator domain, which must not be the admin originator.
+
+Throws
+
+If not authenticated, or if the originator is the admin.
+
+###### Method loadSnapshot
+
+Loads a previously saved state snapshot (produced by `saveSnapshot`).
+This will restore the primary key but will **not** restore the privileged key manager
+(that must be provided separately to complete authentication).
+
+```ts
+async loadSnapshot(snapshot: number[]): Promise<void> 
+```
+
+Argument Details
+
++ **snapshot**
+  + A byte array that was previously returned by `saveSnapshot`.
+
+Throws
+
+If the snapshot format is invalid or decryption fails.
+
+###### Method providePrimaryKey
+
+Provides the primary key (32 bytes) needed for authentication.
+If a privileged key manager has already been provided, we attempt to build
+the underlying wallet. Otherwise, we wait until the manager is also provided.
+
+```ts
+async providePrimaryKey(key: number[]): Promise<void> 
+```
+
+Argument Details
+
++ **key**
+  + A 32-byte primary key.
+
+###### Method providePrivilegedKeyManager
+
+Provides the privileged key manager needed for sensitive tasks.
+If a primary key has already been provided (or loaded from a snapshot),
+we attempt to build the underlying wallet. Otherwise, we wait until the key is provided.
+
+```ts
+async providePrivilegedKeyManager(manager: PrivilegedKeyManager): Promise<void> 
+```
+See also: [PrivilegedKeyManager](./client.md#class-privilegedkeymanager)
+
+Argument Details
+
++ **manager**
+  + An instance of `PrivilegedKeyManager`.
+
+###### Method saveSnapshot
+
+Saves the current wallet state (including just the primary key)
+into an encrypted snapshot. This snapshot can be stored and later
+passed to `loadSnapshot` to restore the primary key (and partially authenticate).
+
+**Note**: The snapshot does NOT include the privileged key manager.
+You must still provide that separately after loading the snapshot
+in order to complete authentication.
+
+```ts
+saveSnapshot(): number[] 
+```
+
+Returns
+
+A byte array representing the encrypted snapshot.
+
+Throws
+
+if no primary key is currently set.
+
+###### Method waitForAuthentication
+
+Blocks until the user is authenticated (by providing primaryKey and privileged manager).
+If not authenticated yet, it waits until that occurs.
+
+```ts
+async waitForAuthentication(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AuthenticatedResult> 
+```
+
+Argument Details
+
++ **_**
+  + Not used in this manager.
++ **originator**
+  + The originator domain, which must not be the admin originator.
+
+Throws
+
+If the originator is the admin.
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6505,6 +7786,158 @@ See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.m
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Class: TwilioPhoneInteractor
+
+TwilioPhoneInteractor
+
+A client-side class that knows how to call the WAB server for Twilio-based phone verification.
+
+```ts
+export class TwilioPhoneInteractor extends AuthMethodInteractor {
+    public methodType = "TwilioPhone";
+    public async startAuth(serverUrl: string, presentationKey: string, payload: AuthPayload): Promise<StartAuthResponse> 
+    public async completeAuth(serverUrl: string, presentationKey: string, payload: AuthPayload): Promise<CompleteAuthResponse> 
+}
+```
+
+See also: [AuthMethodInteractor](./client.md#class-authmethodinteractor), [AuthPayload](./client.md#interface-authpayload), [CompleteAuthResponse](./client.md#interface-completeauthresponse), [StartAuthResponse](./client.md#interface-startauthresponse)
+
+###### Method completeAuth
+
+Complete the Twilio phone verification on the server.
+- The server will verify the code with Twilio Verify’s verificationChecks endpoint.
+
+```ts
+public async completeAuth(serverUrl: string, presentationKey: string, payload: AuthPayload): Promise<CompleteAuthResponse> 
+```
+See also: [AuthPayload](./client.md#interface-authpayload), [CompleteAuthResponse](./client.md#interface-completeauthresponse)
+
+Returns
+
+- { success, message, presentationKey }
+
+Argument Details
+
++ **serverUrl**
+  + The base URL of the WAB server
++ **presentationKey**
+  + The 256-bit key
++ **payload**
+  + { phoneNumber: string, otp: string } (the code that was received via SMS)
+
+###### Method startAuth
+
+Start the Twilio phone verification on the server.
+- The server will send an SMS code to the user’s phone, using Twilio Verify.
+
+```ts
+public async startAuth(serverUrl: string, presentationKey: string, payload: AuthPayload): Promise<StartAuthResponse> 
+```
+See also: [AuthPayload](./client.md#interface-authpayload), [StartAuthResponse](./client.md#interface-startauthresponse)
+
+Returns
+
+- { success, message, data }
+
+Argument Details
+
++ **serverUrl**
+  + The base URL of the WAB server (e.g. http://localhost:3000)
++ **presentationKey**
+  + The 256-bit key the client is attempting to authenticate with
++ **payload**
+  + { phoneNumber: string } (the phone number to verify)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Class: WABClient
+
+```ts
+export class WABClient {
+    constructor(private serverUrl: string) 
+    public async getInfo() 
+    public generateRandomPresentationKey(): string 
+    public async startAuthMethod(authMethod: AuthMethodInteractor, presentationKey: string, payload: any) 
+    public async completeAuthMethod(authMethod: AuthMethodInteractor, presentationKey: string, payload: any) 
+    public async listLinkedMethods(presentationKey: string) 
+    public async unlinkMethod(presentationKey: string, authMethodId: number) 
+    public async requestFaucet(presentationKey: string) 
+    public async deleteUser(presentationKey: string) 
+}
+```
+
+See also: [AuthMethodInteractor](./client.md#class-authmethodinteractor)
+
+###### Method completeAuthMethod
+
+Complete an Auth Method flow
+
+```ts
+public async completeAuthMethod(authMethod: AuthMethodInteractor, presentationKey: string, payload: any) 
+```
+See also: [AuthMethodInteractor](./client.md#class-authmethodinteractor)
+
+###### Method deleteUser
+
+Delete user
+
+```ts
+public async deleteUser(presentationKey: string) 
+```
+
+###### Method generateRandomPresentationKey
+
+Generate a random 256-bit presentation key as a hex string (client side).
+
+```ts
+public generateRandomPresentationKey(): string 
+```
+
+###### Method getInfo
+
+Return the WAB server info
+
+```ts
+public async getInfo() 
+```
+
+###### Method listLinkedMethods
+
+List user-linked methods
+
+```ts
+public async listLinkedMethods(presentationKey: string) 
+```
+
+###### Method requestFaucet
+
+Request faucet
+
+```ts
+public async requestFaucet(presentationKey: string) 
+```
+
+###### Method startAuthMethod
+
+Start an Auth Method flow
+
+```ts
+public async startAuthMethod(authMethod: AuthMethodInteractor, presentationKey: string, payload: any) 
+```
+See also: [AuthMethodInteractor](./client.md#class-authmethodinteractor)
+
+###### Method unlinkMethod
+
+Unlink a given Auth Method by ID
+
+```ts
+public async unlinkMethod(presentationKey: string, authMethodId: number) 
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Class: WERR_BAD_REQUEST
 
 The request is invalid.
@@ -6727,6 +8160,8 @@ export class Wallet implements WalletInterface, ProtoWallet {
     chain: sdk.Chain;
     keyDeriver: KeyDeriver;
     storage: WalletStorageManager;
+    settingsManager: WalletSettingsManager;
+    lookupResolver: LookupResolver;
     services?: sdk.WalletServices;
     monitor?: Monitor;
     identityKey: string;
@@ -6783,7 +8218,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
 }
 ```
 
-See also: [Chain](./client.md#type-chain), [KeyPair](./client.md#interface-keypair), [Monitor](./monitor.md#class-monitor), [PendingSignAction](./client.md#interface-pendingsignaction), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [StorageIdentity](./client.md#interface-storageidentity), [WalletArgs](./client.md#interface-walletargs), [WalletBalance](./client.md#interface-walletbalance), [WalletServices](./client.md#interface-walletservices), [WalletSigner](./client.md#class-walletsigner), [WalletStorageManager](./storage.md#class-walletstoragemanager), [createAction](./storage.md#function-createaction), [getIdentityKey](./client.md#function-getidentitykey), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [proveCertificate](./client.md#function-provecertificate), [signAction](./client.md#function-signaction)
+See also: [Chain](./client.md#type-chain), [KeyPair](./client.md#interface-keypair), [Monitor](./monitor.md#class-monitor), [PendingSignAction](./client.md#interface-pendingsignaction), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [StorageIdentity](./client.md#interface-storageidentity), [WalletArgs](./client.md#interface-walletargs), [WalletBalance](./client.md#interface-walletbalance), [WalletServices](./client.md#interface-walletservices), [WalletSettingsManager](./client.md#class-walletsettingsmanager), [WalletSigner](./client.md#class-walletsigner), [WalletStorageManager](./storage.md#class-walletstoragemanager), [createAction](./storage.md#function-createaction), [getIdentityKey](./client.md#function-getidentitykey), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [proveCertificate](./client.md#function-provecertificate), [signAction](./client.md#function-signaction)
 
 ###### Property beef
 
@@ -6874,6 +8309,54 @@ Argument Details
 
 + **toWallet**
   + wallet which will receive this wallet's satoshis.
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Class: WalletAuthenticationManager
+
+WalletAuthenticationManager
+
+A wallet manager that integrates
+with a WABClient for user authentication flows (e.g. Twilio phone).
+
+```ts
+export class WalletAuthenticationManager extends CWIStyleWalletManager {
+    constructor(adminOriginator: string, walletBuilder: (primaryKey: number[], privilegedKeyManager: PrivilegedKeyManager) => Promise<WalletInterface>, interactor: UMPTokenInteractor = new OverlayUMPTokenInteractor(), recoveryKeySaver: (key: number[]) => Promise<true>, passwordRetriever: (reason: string, test: (passwordCandidate: string) => boolean) => Promise<string>, wabClient: WABClient, authMethod?: AuthMethodInteractor, stateSnapshot?: number[]) 
+    public setAuthMethod(method: AuthMethodInteractor) 
+    public async startAuth(payload: any): Promise<void> 
+    public async completeAuth(payload: any): Promise<void> 
+}
+```
+
+See also: [AuthMethodInteractor](./client.md#class-authmethodinteractor), [CWIStyleWalletManager](./client.md#class-cwistylewalletmanager), [OverlayUMPTokenInteractor](./client.md#class-overlayumptokeninteractor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [UMPTokenInteractor](./client.md#interface-umptokeninteractor), [WABClient](./client.md#class-wabclient)
+
+###### Method completeAuth
+
+Completes the WAB-based flow, retrieving the final presentationKey from WAB if successful.
+
+```ts
+public async completeAuth(payload: any): Promise<void> 
+```
+
+###### Method setAuthMethod
+
+Sets (or switches) the chosen AuthMethodInteractor at runtime,
+in case the user changes their mind or picks a new method in the UI.
+
+```ts
+public setAuthMethod(method: AuthMethodInteractor) 
+```
+See also: [AuthMethodInteractor](./client.md#class-authmethodinteractor)
+
+###### Method startAuth
+
+Initiate the WAB-based flow, e.g. sending an SMS code or starting an ID check,
+using the chosen AuthMethodInteractor.
+
+```ts
+public async startAuth(payload: any): Promise<void> 
+```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6994,6 +8477,497 @@ abstract trigger(nowMsecsSinceEpoch: number): {
     run: boolean;
 }
 ```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Class: WalletPermissionsManager
+
+```ts
+export class WalletPermissionsManager implements WalletInterface {
+    constructor(underlyingWallet: WalletInterface, adminOriginator: string, config: PermissionsManagerConfig = {}) 
+    public bindCallback(eventName: keyof WalletPermissionsManagerCallbacks, handler: PermissionEventHandler): number 
+    public unbindCallback(eventName: keyof WalletPermissionsManagerCallbacks, reference: number | Function): boolean 
+    public async grantPermission(params: {
+        requestID: string;
+        expiry?: number;
+        ephemeral?: boolean;
+        amount?: number;
+    }): Promise<void> 
+    public async denyPermission(requestID: string): Promise<void> 
+    public async ensureProtocolPermission({ originator, privileged, protocolID, counterparty, reason, seekPermission = true, usageType }: {
+        originator: string;
+        privileged: boolean;
+        protocolID: [
+            0 | 1 | 2,
+            string
+        ];
+        counterparty: string;
+        reason?: string;
+        seekPermission?: boolean;
+        usageType: "signing" | "encrypting" | "hmac" | "publicKey" | "identityKey" | "linkageRevelation" | "generic";
+    }): Promise<boolean> 
+    public async ensureBasketAccess({ originator, basket, reason, seekPermission = true, usageType }: {
+        originator: string;
+        basket: string;
+        reason?: string;
+        seekPermission?: boolean;
+        usageType: "insertion" | "removal" | "listing";
+    }): Promise<boolean> 
+    public async ensureCertificateAccess({ originator, privileged, verifier, certType, fields, reason, seekPermission = true, usageType }: {
+        originator: string;
+        privileged: boolean;
+        verifier: string;
+        certType: string;
+        fields: string[];
+        reason?: string;
+        seekPermission?: boolean;
+        usageType: "disclosure";
+    }): Promise<boolean> 
+    public async ensureSpendingAuthorization({ originator, satoshis, lineItems, reason, seekPermission = true }: {
+        originator: string;
+        satoshis: number;
+        lineItems?: Array<{
+            type: "input" | "output" | "fee";
+            description: string;
+            satoshis: number;
+        }>;
+        reason?: string;
+        seekPermission?: boolean;
+    }): Promise<boolean> 
+    public async ensureLabelAccess({ originator, label, reason, seekPermission = true, usageType }: {
+        originator: string;
+        label: string;
+        reason?: string;
+        seekPermission?: boolean;
+        usageType: "apply" | "list";
+    }): Promise<boolean> 
+    public async querySpentSince(token: PermissionToken): Promise<number> 
+    public async listProtocolPermissions({ originator }: {
+        originator?: string;
+    }): Promise<PermissionToken[]> 
+    public async hasProtocolPermission(params: {
+        originator: string;
+        privileged: boolean;
+        protocolID: [
+            0 | 1 | 2,
+            string
+        ];
+        counterparty: string;
+    }): Promise<boolean> 
+    public async listBasketAccess(params: {
+        originator?: string;
+    }): Promise<PermissionToken[]> 
+    public async hasBasketAccess(params: {
+        originator: string;
+        basket: string;
+    }): Promise<boolean> 
+    public async listSpendingAuthorizations(params: {
+        originator?: string;
+    }): Promise<PermissionToken[]> 
+    public async hasSpendingAuthorization(params: {
+        originator: string;
+        satoshis: number;
+    }): Promise<boolean> 
+    public async listCertificateAccess(params: {
+        originator?: string;
+    }): Promise<PermissionToken[]> 
+    public async hasCertificateAccess(params: {
+        originator: string;
+        privileged: boolean;
+        verifier: string;
+        certType: string;
+        fields: string[];
+    }): Promise<boolean> 
+    public async revokePermission(oldToken: PermissionToken): Promise<void> 
+    public async createAction(args: Parameters<WalletInterface["createAction"]>[0], originator?: string): ReturnType<WalletInterface["createAction"]> 
+    public async signAction(...args: Parameters<WalletInterface["signAction"]>): ReturnType<WalletInterface["signAction"]> 
+    public async abortAction(...args: Parameters<WalletInterface["abortAction"]>): ReturnType<WalletInterface["abortAction"]> 
+    public async listActions(...args: Parameters<WalletInterface["listActions"]>): ReturnType<WalletInterface["listActions"]> 
+    public async internalizeAction(...args: Parameters<WalletInterface["internalizeAction"]>): ReturnType<WalletInterface["internalizeAction"]> 
+    public async listOutputs(...args: Parameters<WalletInterface["listOutputs"]>): ReturnType<WalletInterface["listOutputs"]> 
+    public async relinquishOutput(...args: Parameters<WalletInterface["relinquishOutput"]>): ReturnType<WalletInterface["relinquishOutput"]> 
+    public async getPublicKey(...args: Parameters<WalletInterface["getPublicKey"]>): ReturnType<WalletInterface["getPublicKey"]> 
+    public async revealCounterpartyKeyLinkage(...args: Parameters<WalletInterface["revealCounterpartyKeyLinkage"]>): ReturnType<WalletInterface["revealCounterpartyKeyLinkage"]> 
+    public async revealSpecificKeyLinkage(...args: Parameters<WalletInterface["revealSpecificKeyLinkage"]>): ReturnType<WalletInterface["revealSpecificKeyLinkage"]> 
+    public async encrypt(...args: Parameters<WalletInterface["encrypt"]>): ReturnType<WalletInterface["encrypt"]> 
+    public async decrypt(...args: Parameters<WalletInterface["decrypt"]>): ReturnType<WalletInterface["decrypt"]> 
+    public async createHmac(...args: Parameters<WalletInterface["createHmac"]>): ReturnType<WalletInterface["createHmac"]> 
+    public async verifyHmac(...args: Parameters<WalletInterface["verifyHmac"]>): ReturnType<WalletInterface["verifyHmac"]> 
+    public async createSignature(...args: Parameters<WalletInterface["createSignature"]>): ReturnType<WalletInterface["createSignature"]> 
+    public async verifySignature(...args: Parameters<WalletInterface["verifySignature"]>): ReturnType<WalletInterface["verifySignature"]> 
+    public async acquireCertificate(...args: Parameters<WalletInterface["acquireCertificate"]>): ReturnType<WalletInterface["acquireCertificate"]> 
+    public async listCertificates(...args: Parameters<WalletInterface["listCertificates"]>): ReturnType<WalletInterface["listCertificates"]> 
+    public async proveCertificate(...args: Parameters<WalletInterface["proveCertificate"]>): ReturnType<WalletInterface["proveCertificate"]> 
+    public async relinquishCertificate(...args: Parameters<WalletInterface["relinquishCertificate"]>): ReturnType<WalletInterface["relinquishCertificate"]> 
+    public async discoverByIdentityKey(...args: Parameters<WalletInterface["discoverByIdentityKey"]>): ReturnType<WalletInterface["discoverByIdentityKey"]> 
+    public async discoverByAttributes(...args: Parameters<WalletInterface["discoverByAttributes"]>): ReturnType<WalletInterface["discoverByAttributes"]> 
+    public async isAuthenticated(...args: Parameters<WalletInterface["isAuthenticated"]>): ReturnType<WalletInterface["isAuthenticated"]> 
+    public async waitForAuthentication(...args: Parameters<WalletInterface["waitForAuthentication"]>): ReturnType<WalletInterface["waitForAuthentication"]> 
+    public async getHeight(...args: Parameters<WalletInterface["getHeight"]>): ReturnType<WalletInterface["getHeight"]> 
+    public async getHeaderForHeight(...args: Parameters<WalletInterface["getHeaderForHeight"]>): ReturnType<WalletInterface["getHeaderForHeight"]> 
+    public async getNetwork(...args: Parameters<WalletInterface["getNetwork"]>): ReturnType<WalletInterface["getNetwork"]> 
+    public async getVersion(...args: Parameters<WalletInterface["getVersion"]>): ReturnType<WalletInterface["getVersion"]> 
+}
+```
+
+See also: [PermissionEventHandler](./client.md#type-permissioneventhandler), [PermissionToken](./client.md#interface-permissiontoken), [PermissionsManagerConfig](./client.md#interface-permissionsmanagerconfig), [WalletPermissionsManagerCallbacks](./client.md#interface-walletpermissionsmanagercallbacks), [createAction](./storage.md#function-createaction), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [proveCertificate](./client.md#function-provecertificate), [signAction](./client.md#function-signaction)
+
+###### Constructor
+
+Constructs a new Permissions Manager instance.
+
+```ts
+constructor(underlyingWallet: WalletInterface, adminOriginator: string, config: PermissionsManagerConfig = {}) 
+```
+See also: [PermissionsManagerConfig](./client.md#interface-permissionsmanagerconfig)
+
+Argument Details
+
++ **underlyingWallet**
+  + The underlying BRC-100 wallet, where requests are forwarded after permission is granted
++ **adminOriginator**
+  + The domain or FQDN that is automatically allowed everything
++ **config**
+  + A set of boolean flags controlling how strictly permissions are enforced
+
+###### Method bindCallback
+
+Binds a callback function to a named event, such as `onProtocolPermissionRequested`.
+
+```ts
+public bindCallback(eventName: keyof WalletPermissionsManagerCallbacks, handler: PermissionEventHandler): number 
+```
+See also: [PermissionEventHandler](./client.md#type-permissioneventhandler), [WalletPermissionsManagerCallbacks](./client.md#interface-walletpermissionsmanagercallbacks)
+
+Returns
+
+A numeric ID you can use to unbind later
+
+Argument Details
+
++ **eventName**
+  + The name of the event to listen to
++ **handler**
+  + A function that handles the event
+
+###### Method denyPermission
+
+Denies a previously requested permission.
+This method rejects all pending promise calls waiting on that request
+
+```ts
+public async denyPermission(requestID: string): Promise<void> 
+```
+
+Argument Details
+
++ **requestID**
+  + requestID identifying which request to deny
+
+###### Method ensureBasketAccess
+
+Ensures the originator has basket usage permission for the specified basket.
+If not, triggers a permission request flow.
+
+```ts
+public async ensureBasketAccess({ originator, basket, reason, seekPermission = true, usageType }: {
+    originator: string;
+    basket: string;
+    reason?: string;
+    seekPermission?: boolean;
+    usageType: "insertion" | "removal" | "listing";
+}): Promise<boolean> 
+```
+
+###### Method ensureCertificateAccess
+
+Ensures the originator has a valid certificate permission.
+This is relevant when revealing certificate fields in DCAP contexts.
+
+```ts
+public async ensureCertificateAccess({ originator, privileged, verifier, certType, fields, reason, seekPermission = true, usageType }: {
+    originator: string;
+    privileged: boolean;
+    verifier: string;
+    certType: string;
+    fields: string[];
+    reason?: string;
+    seekPermission?: boolean;
+    usageType: "disclosure";
+}): Promise<boolean> 
+```
+
+###### Method ensureLabelAccess
+
+Ensures the originator has label usage permission.
+If no valid (unexpired) permission token is found, triggers a permission request flow.
+
+```ts
+public async ensureLabelAccess({ originator, label, reason, seekPermission = true, usageType }: {
+    originator: string;
+    label: string;
+    reason?: string;
+    seekPermission?: boolean;
+    usageType: "apply" | "list";
+}): Promise<boolean> 
+```
+
+###### Method ensureProtocolPermission
+
+Ensures the originator has protocol usage permission.
+If no valid (unexpired) permission token is found, triggers a permission request flow.
+
+```ts
+public async ensureProtocolPermission({ originator, privileged, protocolID, counterparty, reason, seekPermission = true, usageType }: {
+    originator: string;
+    privileged: boolean;
+    protocolID: [
+        0 | 1 | 2,
+        string
+    ];
+    counterparty: string;
+    reason?: string;
+    seekPermission?: boolean;
+    usageType: "signing" | "encrypting" | "hmac" | "publicKey" | "identityKey" | "linkageRevelation" | "generic";
+}): Promise<boolean> 
+```
+
+###### Method ensureSpendingAuthorization
+
+Ensures the originator has spending authorization (DSAP) for a certain satoshi amount.
+If the existing token limit is insufficient, attempts to renew. If no token, attempts to create one.
+
+```ts
+public async ensureSpendingAuthorization({ originator, satoshis, lineItems, reason, seekPermission = true }: {
+    originator: string;
+    satoshis: number;
+    lineItems?: Array<{
+        type: "input" | "output" | "fee";
+        description: string;
+        satoshis: number;
+    }>;
+    reason?: string;
+    seekPermission?: boolean;
+}): Promise<boolean> 
+```
+
+###### Method grantPermission
+
+Grants a previously requested permission.
+This method:
+ 1) Resolves all pending promise calls waiting on this request
+ 2) Optionally creates or renews an on-chain PushDrop token (unless `ephemeral===true`)
+
+```ts
+public async grantPermission(params: {
+    requestID: string;
+    expiry?: number;
+    ephemeral?: boolean;
+    amount?: number;
+}): Promise<void> 
+```
+
+Argument Details
+
++ **params**
+  + requestID to identify which request is granted, plus optional expiry
+or `ephemeral` usage, etc.
+
+###### Method hasBasketAccess
+
+Returns `true` if the originator already holds a valid unexpired basket permission for `basket`.
+
+```ts
+public async hasBasketAccess(params: {
+    originator: string;
+    basket: string;
+}): Promise<boolean> 
+```
+
+###### Method hasCertificateAccess
+
+Returns `true` if the originator already holds a valid unexpired certificate access
+for the given certType/fields. Does not prompt the user.
+
+```ts
+public async hasCertificateAccess(params: {
+    originator: string;
+    privileged: boolean;
+    verifier: string;
+    certType: string;
+    fields: string[];
+}): Promise<boolean> 
+```
+
+###### Method hasProtocolPermission
+
+Returns true if the originator already holds a valid unexpired protocol permission.
+This calls `ensureProtocolPermission` with `seekPermission=false`, so it won't prompt.
+
+```ts
+public async hasProtocolPermission(params: {
+    originator: string;
+    privileged: boolean;
+    protocolID: [
+        0 | 1 | 2,
+        string
+    ];
+    counterparty: string;
+}): Promise<boolean> 
+```
+
+###### Method hasSpendingAuthorization
+
+Returns `true` if the originator already holds a valid spending authorization token
+with enough available monthly spend. We do not prompt (seekPermission=false).
+
+```ts
+public async hasSpendingAuthorization(params: {
+    originator: string;
+    satoshis: number;
+}): Promise<boolean> 
+```
+
+###### Method listBasketAccess
+
+Lists basket permission tokens (DBAP) for a given originator (or for all if not specified).
+
+```ts
+public async listBasketAccess(params: {
+    originator?: string;
+}): Promise<PermissionToken[]> 
+```
+See also: [PermissionToken](./client.md#interface-permissiontoken)
+
+###### Method listCertificateAccess
+
+Lists certificate permission tokens (DCAP) for a given originator (or all).
+
+```ts
+public async listCertificateAccess(params: {
+    originator?: string;
+}): Promise<PermissionToken[]> 
+```
+See also: [PermissionToken](./client.md#interface-permissiontoken)
+
+###### Method listProtocolPermissions
+
+Lists all protocol permission tokens (DPACP) for a given originator or for all if originator is undefined.
+This is a convenience method for UI or debug.
+
+```ts
+public async listProtocolPermissions({ originator }: {
+    originator?: string;
+}): Promise<PermissionToken[]> 
+```
+See also: [PermissionToken](./client.md#interface-permissiontoken)
+
+###### Method listSpendingAuthorizations
+
+Lists spending authorization tokens (DSAP) for a given originator (or all).
+
+```ts
+public async listSpendingAuthorizations(params: {
+    originator?: string;
+}): Promise<PermissionToken[]> 
+```
+See also: [PermissionToken](./client.md#interface-permissiontoken)
+
+###### Method querySpentSince
+
+Returns spending for an originator in the current calendar month.
+
+```ts
+public async querySpentSince(token: PermissionToken): Promise<number> 
+```
+See also: [PermissionToken](./client.md#interface-permissiontoken)
+
+###### Method revokePermission
+
+Revokes a permission token by spending it with no replacement output.
+The manager builds a BRC-100 transaction that consumes the token, effectively invalidating it.
+
+```ts
+public async revokePermission(oldToken: PermissionToken): Promise<void> 
+```
+See also: [PermissionToken](./client.md#interface-permissiontoken)
+
+###### Method unbindCallback
+
+Unbinds a previously registered callback by either its numeric ID (returned by `bindCallback`)
+or by exact function reference.
+
+```ts
+public unbindCallback(eventName: keyof WalletPermissionsManagerCallbacks, reference: number | Function): boolean 
+```
+See also: [WalletPermissionsManagerCallbacks](./client.md#interface-walletpermissionsmanagercallbacks)
+
+Returns
+
+True if successfully unbound, false otherwise
+
+Argument Details
+
++ **eventName**
+  + The event name, e.g. "onProtocolPermissionRequested"
++ **reference**
+  + Either the numeric ID or the function reference
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Class: WalletSettingsManager
+
+Manages wallet settings
+
+```ts
+export class WalletSettingsManager {
+    constructor(private wallet: WalletInterface, private config: WalletSettingsManagerConfig = {
+        defaultSettings: DEFAULT_SETTINGS
+    }) 
+    async get(): Promise<WalletSettings> 
+    async set(settings: WalletSettings): Promise<void> 
+    async delete(): Promise<void> 
+}
+```
+
+See also: [DEFAULT_SETTINGS](./client.md#variable-default_settings), [WalletSettings](./client.md#interface-walletsettings), [WalletSettingsManagerConfig](./client.md#interface-walletsettingsmanagerconfig)
+
+###### Method delete
+
+Deletes the user's settings token.
+
+```ts
+async delete(): Promise<void> 
+```
+
+###### Method get
+
+Returns a user's wallet settings
+
+```ts
+async get(): Promise<WalletSettings> 
+```
+See also: [WalletSettings](./client.md#interface-walletsettings)
+
+Returns
+
+- Wallet settings object
+
+###### Method set
+
+Creates (or updates) the user's settings token.
+
+```ts
+async set(settings: WalletSettings): Promise<void> 
+```
+See also: [WalletSettings](./client.md#interface-walletsettings)
+
+Argument Details
+
++ **settings**
+  + The wallet settings to be stored.
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8856,16 +10830,16 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | |
 | --- | --- |
-| [Chain](#type-chain) | [PostReqsToNetworkDetailsStatus](#type-postreqstonetworkdetailsstatus) |
-| [DBType](#type-dbtype) | [PostTxsService](#type-posttxsservice) |
-| [DescriptionString5to2000Bytes](#type-descriptionstring5to2000bytes) | [ProvenTxReqStatus](#type-proventxreqstatus) |
-| [EntityStorage](#type-entitystorage) | [ReqHistoryNote](#type-reqhistorynote) |
-| [GetMerklePathService](#type-getmerklepathservice) | [StorageProvidedBy](#type-storageprovidedby) |
-| [GetRawTxService](#type-getrawtxservice) | [SyncProtocolVersion](#type-syncprotocolversion) |
-| [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat) | [SyncStatus](#type-syncstatus) |
-| [GetUtxoStatusService](#type-getutxostatusservice) | [TransactionStatus](#type-transactionstatus) |
-| [MonitorStorage](#type-monitorstorage) | [UpdateFiatExchangeRateService](#type-updatefiatexchangerateservice) |
-| [PostBeefService](#type-postbeefservice) |  |
+| [Chain](#type-chain) | [PostBeefService](#type-postbeefservice) |
+| [DBType](#type-dbtype) | [PostReqsToNetworkDetailsStatus](#type-postreqstonetworkdetailsstatus) |
+| [DescriptionString5to2000Bytes](#type-descriptionstring5to2000bytes) | [PostTxsService](#type-posttxsservice) |
+| [EntityStorage](#type-entitystorage) | [ProvenTxReqStatus](#type-proventxreqstatus) |
+| [GetMerklePathService](#type-getmerklepathservice) | [ReqHistoryNote](#type-reqhistorynote) |
+| [GetRawTxService](#type-getrawtxservice) | [StorageProvidedBy](#type-storageprovidedby) |
+| [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat) | [SyncProtocolVersion](#type-syncprotocolversion) |
+| [GetUtxoStatusService](#type-getutxostatusservice) | [SyncStatus](#type-syncstatus) |
+| [MonitorStorage](#type-monitorstorage) | [TransactionStatus](#type-transactionstatus) |
+| [PermissionEventHandler](#type-permissioneventhandler) | [UpdateFiatExchangeRateService](#type-updatefiatexchangerateservice) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8958,6 +10932,21 @@ export type MonitorStorage = WalletStorageManager
 ```
 
 See also: [WalletStorageManager](./storage.md#class-walletstoragemanager)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Type: PermissionEventHandler
+
+Signature for functions that handle a permission request event, e.g. "Please ask the user to allow basket X".
+
+```ts
+export type PermissionEventHandler = (request: PermissionRequest & {
+    requestID: string;
+}) => void | Promise<void>
+```
+
+See also: [PermissionRequest](./client.md#interface-permissionrequest)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -9104,22 +11093,69 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 #### Variables
 
-| |
-| --- |
-| [ProvenTxReqNonTerminalStatus](#variable-proventxreqnonterminalstatus) |
-| [ProvenTxReqTerminalStatus](#variable-proventxreqterminalstatus) |
-| [brc29ProtocolID](#variable-brc29protocolid) |
-| [maxPossibleSatoshis](#variable-maxpossiblesatoshis) |
-| [outputColumnsWithoutLockingScript](#variable-outputcolumnswithoutlockingscript) |
-| [specOpInvalidChange](#variable-specopinvalidchange) |
-| [specOpSetWalletChangeParams](#variable-specopsetwalletchangeparams) |
-| [specOpWalletBalance](#variable-specopwalletbalance) |
-| [transactionColumnsWithoutRawTx](#variable-transactioncolumnswithoutrawtx) |
+| | |
+| --- | --- |
+| [DEFAULT_SETTINGS](#variable-default_settings) | [parseResults](#variable-parseresults) |
+| [PBKDF2_NUM_ROUNDS](#variable-pbkdf2_num_rounds) | [queryOverlay](#variable-queryoverlay) |
+| [ProvenTxReqNonTerminalStatus](#variable-proventxreqnonterminalstatus) | [specOpInvalidChange](#variable-specopinvalidchange) |
+| [ProvenTxReqTerminalStatus](#variable-proventxreqterminalstatus) | [specOpSetWalletChangeParams](#variable-specopsetwalletchangeparams) |
+| [TESTNET_DEFAULT_SETTINGS](#variable-testnet_default_settings) | [specOpWalletBalance](#variable-specopwalletbalance) |
+| [brc29ProtocolID](#variable-brc29protocolid) | [transactionColumnsWithoutRawTx](#variable-transactioncolumnswithoutrawtx) |
+| [maxPossibleSatoshis](#variable-maxpossiblesatoshis) | [transformVerifiableCertificatesWithTrust](#variable-transformverifiablecertificateswithtrust) |
+| [outputColumnsWithoutLockingScript](#variable-outputcolumnswithoutlockingscript) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
 
+##### Variable: DEFAULT_SETTINGS
+
+```ts
+DEFAULT_SETTINGS = {
+    trustSettings: {
+        trustLevel: 2,
+        trustedCertifiers: [
+            {
+                name: "Babbage Trust Services",
+                description: "Resolves identity information for Babbage-run APIs and Bitcoin infrastructure.",
+                iconUrl: "https://projectbabbage.com/favicon.ico",
+                identityKey: "028703956178067ea7ca405111f1ca698290a0112a3d7cf3d843e195bf58a7cfa6",
+                trust: 4
+            },
+            {
+                name: "IdentiCert",
+                description: "Certifies legal first and last name, and photos",
+                iconUrl: "https://identicert.me/favicon.ico",
+                trust: 5,
+                identityKey: "0295bf1c7842d14babf60daf2c733956c331f9dcb2c79e41f85fd1dda6a3fa4549"
+            },
+            {
+                name: "SocialCert",
+                description: "Certifies social media handles, phone numbers and emails",
+                iconUrl: "https://socialcert.net/favicon.ico",
+                trust: 3,
+                identityKey: "03285263f06139b66fb27f51cf8a92e9dd007c4c4b83876ad6c3e7028db450a4c2"
+            }
+        ]
+    },
+    theme: { mode: "dark" }
+} as WalletSettings
+```
+
+See also: [WalletSettings](./client.md#interface-walletsettings)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Variable: PBKDF2_NUM_ROUNDS
+
+```ts
+PBKDF2_NUM_ROUNDS = 7777
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Variable: ProvenTxReqNonTerminalStatus
 
 ```ts
@@ -9148,6 +11184,26 @@ ProvenTxReqTerminalStatus: ProvenTxReqStatus[] = ["completed", "invalid", "doubl
 ```
 
 See also: [ProvenTxReqStatus](./client.md#type-proventxreqstatus)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Variable: TESTNET_DEFAULT_SETTINGS
+
+```ts
+TESTNET_DEFAULT_SETTINGS: WalletSettings = {
+    ...DEFAULT_SETTINGS,
+    trustSettings: {
+        ...DEFAULT_SETTINGS.trustSettings,
+        trustedCertifiers: DEFAULT_SETTINGS.trustSettings.trustedCertifiers.map(certifier => ({
+            ...certifier,
+            identityKey: TESTNET_IDENTITY_KEYS[certifier.name] || certifier.identityKey
+        }))
+    }
+}
+```
+
+See also: [DEFAULT_SETTINGS](./client.md#variable-default_settings), [WalletSettings](./client.md#interface-walletsettings)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -9204,6 +11260,53 @@ outputColumnsWithoutLockingScript = [
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Variable: parseResults
+
+```ts
+parseResults = async (lookupResult: LookupAnswer): Promise<VerifiableCertificate[]> => {
+    if (lookupResult.type === "output-list") {
+        const parsedResults: VerifiableCertificate[] = [];
+        for (const output of lookupResult.outputs) {
+            try {
+                const tx = Transaction.fromBEEF(output.beef);
+                const decodedOutput = PushDrop.decode(tx.outputs[output.outputIndex].lockingScript);
+                const certificate: VerifiableCertificate = JSON.parse(Utils.toUTF8(decodedOutput.fields[0]));
+                const verifiableCert = new VerifiableCertificate(certificate.type, certificate.serialNumber, certificate.subject, certificate.certifier, certificate.revocationOutpoint, certificate.fields, certificate.keyring, certificate.signature);
+                const decryptedFields = await verifiableCert.decryptFields(new ProtoWallet("anyone"));
+                await verifiableCert.verify();
+                verifiableCert.decryptedFields = decryptedFields;
+                parsedResults.push(verifiableCert);
+            }
+            catch (error) {
+                console.error(error);
+            }
+        }
+        return parsedResults;
+    }
+    return [];
+}
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Variable: queryOverlay
+
+```ts
+queryOverlay = async (query: unknown, resolver: LookupResolver): Promise<VerifiableCertificate[]> => {
+    const results = await resolver.query({
+        service: "ls_identity",
+        query
+    });
+    return await parseResults(results);
+}
+```
+
+See also: [parseResults](./client.md#variable-parseresults)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Variable: specOpInvalidChange
 
 ```ts
@@ -9250,6 +11353,60 @@ transactionColumnsWithoutRawTx = [
     "txid"
 ]
 ```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Variable: transformVerifiableCertificatesWithTrust
+
+```ts
+transformVerifiableCertificatesWithTrust = (trustSettings: TrustSettings, certificates: VerifiableCertificate[]): DiscoverCertificatesResult => {
+    const identityGroups: Record<string, IdentityGroup> = {};
+    const certifierCache: Record<string, Certifier> = {};
+    certificates.forEach(cert => {
+        const { subject, certifier } = cert;
+        if (!subject || !certifier)
+            return;
+        if (!certifierCache[certifier]) {
+            const found = trustSettings.trustedCertifiers.find(x => x.identityKey === certifier);
+            if (!found)
+                return;
+            certifierCache[certifier] = found;
+        }
+        const certifierInfo: IdentityCertifier = {
+            name: certifierCache[certifier].name,
+            iconUrl: certifierCache[certifier].iconUrl || "",
+            description: certifierCache[certifier].description,
+            trust: certifierCache[certifier].trust
+        };
+        const extendedCert: IdentityCertificate = {
+            ...cert,
+            signature: cert.signature!,
+            decryptedFields: cert.decryptedFields as Record<string, string>,
+            publiclyRevealedKeyring: cert.keyring,
+            certifierInfo
+        };
+        if (!identityGroups[subject]) {
+            identityGroups[subject] = { totalTrust: 0, members: [] };
+        }
+        identityGroups[subject].totalTrust += certifierInfo.trust;
+        identityGroups[subject].members.push(extendedCert);
+    });
+    const finalResults: ExtendedVerifiableCertificate[] = [];
+    Object.values(identityGroups).forEach(group => {
+        if (group.totalTrust >= trustSettings.trustLevel) {
+            finalResults.push(...group.members);
+        }
+    });
+    finalResults.sort((a, b) => b.certifierInfo.trust - a.certifierInfo.trust);
+    return {
+        totalCertificates: finalResults.length,
+        certificates: finalResults
+    };
+}
+```
+
+See also: [Certifier](./client.md#interface-certifier), [ExtendedVerifiableCertificate](./client.md#interface-extendedverifiablecertificate), [TrustSettings](./client.md#interface-trustsettings)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

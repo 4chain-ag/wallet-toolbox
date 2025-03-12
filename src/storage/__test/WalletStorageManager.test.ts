@@ -8,7 +8,7 @@ dotenv.config()
 describe('WalletStorageManager tests', () => {
   jest.setTimeout(99999999)
 
-  const env = _tu.getEnv('test')
+  const env = _tu.getEnvFlags('test')
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {

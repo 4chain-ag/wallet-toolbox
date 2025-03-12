@@ -8,7 +8,8 @@ import {
   ListOutputsResult,
   RelinquishCertificateArgs,
   RelinquishOutputArgs,
-  WalletInterface
+  WalletInterface,
+  AuthFetch
 } from '@bsv/sdk'
 import {
   sdk,
@@ -21,7 +22,6 @@ import {
   TableSyncState,
   TableUser
 } from '../../index.client'
-import { AuthFetch } from '@bsv/sdk'
 
 /**
  * `StorageClient` implements the `WalletStorageProvider` interface which allows it to
@@ -38,9 +38,9 @@ import { AuthFetch } from '@bsv/sdk'
  * For details of the API implemented, follow the "See also" link for the `WalletStorageProvider` interface.
  */
 export class StorageClient implements sdk.WalletStorageProvider {
-  private endpointUrl: string
+  private readonly endpointUrl: string
+  private readonly authClient: AuthFetch
   private nextId = 1
-  private authClient: AuthFetch
 
   // Track ephemeral (in-memory) "settings" if you wish to align with isAvailable() checks
   public settings?: TableSettings
