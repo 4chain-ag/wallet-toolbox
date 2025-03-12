@@ -220,7 +220,13 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
   async getAuth(mustBeActive?: boolean): Promise<sdk.AuthId> {
     if (!this.isAvailable()) await this.makeAvailable()
-    if (mustBeActive && !this._authId.isActive) throw new sdk.WERR_NOT_ACTIVE()
+    if (mustBeActive && !this._authId.isActive) {
+      if (this._conflictingActives?.length || 0 > 0) {
+        throw new sdk.WERR_NOT_ACTIVE(`You have conflicting active storages, set one as active.
+        Suggestion: use setActive("${this._active?.settings?.storageIdentityKey || 'replace_with_identity_key_of_your_selected_storage'}")`)
+      }
+      throw new sdk.WERR_NOT_ACTIVE()
+    }
     return this._authId
   }
 
