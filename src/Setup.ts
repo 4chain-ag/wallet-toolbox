@@ -122,7 +122,8 @@ DEV_KEYS = '{
       filePath,
       taalApiKey,
       devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
-      mySQLConnection
+      mySQLConnection,
+      endpointUrl: process.env.ENDPOINT_URL
     }
   }
 
@@ -215,7 +216,9 @@ DEV_KEYS = '{
     const wo = await Setup.createWallet(args)
 
     const endpointUrl =
-      args.endpointUrl || `https://${args.env.chain !== 'main' ? 'staging-' : ''}storage.babbage.systems`
+      args.endpointUrl ||
+      args.env.endpointUrl ||
+      `https://${args.env.chain !== 'main' ? 'staging-' : ''}storage.babbage.systems`
 
     const client = new StorageClient(wo.wallet, endpointUrl)
     await wo.storage.addWalletStorageProvider(client)
@@ -559,6 +562,11 @@ export interface SetupEnv {
    * Must be valid to make use of MySQL `Setup` class support.
    */
   mySQLConnection: string
+
+  /**
+   * endpointUrl for remote storage server (optional)
+   */
+  endpointUrl?: string
 }
 
 /**
