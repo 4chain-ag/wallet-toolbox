@@ -402,8 +402,8 @@ export class KnexMigrations implements MigrationSource<string> {
     try {
       const q = `SELECT 
     CASE 
-        WHEN (SELECT VERSION() LIKE '%MariaDB%') = 1 THEN 'Unknown'
-        WHEN (SELECT VERSION()) IS NOT NULL THEN 'MySQL'
+        WHEN (SELECT VERSION() LIKE '%MariaDB%') = 1 THEN 'MySQL'
+        WHEN (SELECT VERSION()) IS NOT NULL THEN 'SQLite'
         ELSE 'Unknown'
     END AS database_type;`
       let r = await knex.raw(q)
