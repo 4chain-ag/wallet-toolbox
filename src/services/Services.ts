@@ -39,7 +39,7 @@ export class Services implements sdk.WalletServices {
 
     //prettier-ignore
     this.getMerklePathServices = new ServiceCollection<sdk.GetMerklePathService>()
-      //.add({ name: 'WhatsOnChain', service: this.whatsonchain.getMerklePath.bind(this.whatsonchain) })
+      .add({ name: 'WhatsOnChain', service: this.whatsonchain.getMerklePath.bind(this.whatsonchain) })
       .add({ name: 'Bitails', service: this.bitails.getMerklePath.bind(this.bitails) })
 
     //prettier-ignore

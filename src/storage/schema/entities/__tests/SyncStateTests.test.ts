@@ -1,4 +1,4 @@
-import { EntitySyncState } from '../../../../../src/storage/schema/entities/SyncState'
+import { EntitySyncState } from '../EntitySyncState'
 import { createSyncMap, EntityStorage, sdk, SyncMap, TableSyncState } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 

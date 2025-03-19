@@ -1,8 +1,8 @@
-import { EntityTxLabelMap } from '../../../../../src/storage/schema/entities/TxLabelMap'
+import { EntityTxLabelMap } from '../EntityTxLabelMap'
 import { createSyncMap, sdk, SyncMap, TableTxLabelMap } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { EntityTransaction } from '../../../../../src/storage/schema/entities/Transaction'
-import { EntityTxLabel } from '../../../../../src/storage/schema/entities/TxLabel'
+import { EntityTransaction } from '../EntityTransaction'
+import { EntityTxLabel } from '../EntityTxLabel'
 
 describe('TxLabelMap Class Tests', () => {
   jest.setTimeout(99999999) // Extend timeout for database operations

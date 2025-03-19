@@ -110,12 +110,6 @@ export class StorageClient implements sdk.WalletStorageProvider {
     }
   }
 
-  //////////////////////////////////////////////////////////////////////////////
-  // In a real environment, you might do lazy or real "makeAvailable" logic
-  // For demonstration, we assume that the remote store might return its "settings"
-  // and we store them locally in `this.settings`.
-  //////////////////////////////////////////////////////////////////////////////
-
   /**
    * @returns true once storage `TableSettings` have been retreived from remote storage.
    */

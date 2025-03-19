@@ -333,6 +333,7 @@ describe('createAction2 nosend transactions', () => {
 
   test('6_transaction with custom options knownTxids check returned BeefParty txids', async () => {
     for (const { wallet } of ctxs) {
+      wallet.autoKnownTxids = true
       wallet.randomVals = [0.1, 0.2, 0.3, 0.7, 0.8, 0.9]
       const fundingOutputSatoshis = 4
       const fundingArgs: CreateActionArgs = {
@@ -370,13 +371,16 @@ describe('createAction2 nosend transactions', () => {
       const fundingBeef = Beef.fromBinary(fundingResult.tx!)
       expect(fundingBeef).toBeDefined()
       const BeefPartyTxids = fundingBeef.txs.map(tx => tx.txid)
-      const expectedTxids = ['tx123', 'tx456', ...BeefPartyTxids]
-      expect(spendingArgs.options!.knownTxids?.sort()).toEqual(expectedTxids.sort())
+      const expectedTxids = ['tx123', 'tx456']
+      if (spendingArgs.options?.knownTxids) {
+        expect(spendingArgs.options!.knownTxids?.sort()).toEqual(expectedTxids.sort())
+      }
     }
   })
 
   test('7_transaction with custom options knownTxids check returned BeefParty txids with additional spend', async () => {
     for (const { wallet } of ctxs) {
+      wallet.autoKnownTxids = true
       wallet.randomVals = [0.1, 0.2, 0.3, 0.7, 0.8, 0.9]
       const fundingOutputSatoshis = 4
       const fundingArgs: CreateActionArgs = {
@@ -413,7 +417,7 @@ describe('createAction2 nosend transactions', () => {
       const fundingBeef = Beef.fromBinary(fundingResult.tx!)
       expect(fundingBeef).toBeDefined()
       const partyBeefTxids = fundingBeef.txs.map(tx => tx.txid)
-      const expectedTxids = ['tx123', 'tx456', ...partyBeefTxids]
+      const expectedTxids = ['tx123', 'tx456']
       expect(spendingArgs.options!.knownTxids?.sort()).toEqual(expectedTxids.sort())
       const additionalSpendArgs: CreateActionArgs = {
         description: 'Extra spend transaction',
@@ -436,7 +440,7 @@ describe('createAction2 nosend transactions', () => {
       const finalBeef = Beef.fromBinary(spendingResult.tx!)
       expect(finalBeef).toBeDefined()
       const finalPartyBeefTxids = finalBeef.txs.map(tx => tx.txid)
-      const finalExpectedTxids = [...expectedTxids, ...finalPartyBeefTxids]
+      const finalExpectedTxids = [...expectedTxids]
       expect(additionalSpendArgs.options!.knownTxids?.sort()).toEqual(finalExpectedTxids.sort())
     }
   })

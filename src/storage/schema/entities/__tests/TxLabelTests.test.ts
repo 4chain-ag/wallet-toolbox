@@ -1,4 +1,4 @@
-import { EntityTxLabel } from '../../../../../src/storage/schema/entities/TxLabel'
+import { EntityTxLabel } from '../EntityTxLabel'
 import { createSyncMap, sdk, SyncMap, TableTxLabel } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 

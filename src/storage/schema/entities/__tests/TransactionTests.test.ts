@@ -2,7 +2,7 @@ import { Knex } from 'knex'
 import * as bsv from '@bsv/sdk'
 import { createSyncMap, sdk, SyncMap, TableTransaction } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { EntityTransaction } from '../../../../../src/storage/schema/entities/Transaction'
+import { EntityTransaction } from '../EntityTransaction'
 
 describe('Transaction class method tests', () => {
   jest.setTimeout(99999999)

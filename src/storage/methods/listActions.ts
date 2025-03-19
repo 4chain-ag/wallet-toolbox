@@ -9,6 +9,70 @@ import {
 import { TableOutputX, TableTransaction, TableTxLabel } from '../index.client'
 import { asString, sdk, verifyOne } from '../../index.client'
 import { StorageKnex } from '../StorageKnex'
+import { isListActionsSpecOp } from '../../sdk'
+
+interface ListActionsSpecOp {
+  name: string
+  /**
+   * undefined to intercept no labels from vargs,
+   * empty array to intercept all labels,
+   * or an explicit array of labels to intercept.
+   */
+  labelsToIntercept?: string[]
+  setStatusFilter?: () => string[]
+  postProcess?: (
+    s: StorageKnex,
+    auth: sdk.AuthId,
+    vargs: sdk.ValidListActionsArgs,
+    specOpLabels: string[],
+    txs: Partial<TableTransaction>[]
+  ) => Promise<void>
+}
+
+const labelToSpecOp: Record<string, ListActionsSpecOp> = {
+  [sdk.specOpNoSendActions]: {
+    name: 'noSendActions',
+    labelsToIntercept: ['abort'],
+    setStatusFilter: () => ['nosend'],
+    postProcess: async (
+      s: StorageKnex,
+      auth: sdk.AuthId,
+      vargs: sdk.ValidListActionsArgs,
+      specOpLabels: string[],
+      txs: Partial<TableTransaction>[]
+    ): Promise<void> => {
+      if (specOpLabels.indexOf('abort') >= 0) {
+        for (const tx of txs) {
+          if (tx.status === 'nosend') {
+            await s.abortAction(auth, { reference: tx.reference! })
+            tx.status = 'failed'
+          }
+        }
+      }
+    }
+  },
+  [sdk.specOpFailedActions]: {
+    name: 'failedActions',
+    labelsToIntercept: ['unfail'],
+    setStatusFilter: () => ['failed'],
+    postProcess: async (
+      s: StorageKnex,
+      auth: sdk.AuthId,
+      vargs: sdk.ValidListActionsArgs,
+      specOpLabels: string[],
+      txs: Partial<TableTransaction>[]
+    ): Promise<void> => {
+      if (specOpLabels.indexOf('unfail') >= 0) {
+        for (const tx of txs) {
+          if (tx.status === 'failed') {
+            await s.updateTransaction(tx.transactionId!, { status: 'unfail' })
+            // wallet wire does not support 'unfail' status, return as 'failed'.
+          }
+        }
+      }
+    }
+  }
+}
 
 export async function listActions(
   storage: StorageKnex,
@@ -25,31 +89,58 @@ export async function listActions(
     actions: []
   }
 
+  let specOp: ListActionsSpecOp | undefined = undefined
+  let specOpLabels: string[] = []
+  let labels: string[] = []
+  for (const label of vargs.labels) {
+    if (isListActionsSpecOp(label)) {
+      specOp = labelToSpecOp[label]
+    } else {
+      labels.push(label)
+    }
+  }
+  if (specOp?.labelsToIntercept !== undefined) {
+    const intercept = specOp.labelsToIntercept!
+    const labels2 = labels
+    labels = []
+    if (intercept.length === 0) {
+      specOpLabels = labels2
+    }
+    for (const label of labels2) {
+      if (intercept.indexOf(label) >= 0) {
+        specOpLabels.push(label)
+      } else {
+        labels.push(label)
+      }
+    }
+  }
+
   let labelIds: number[] = []
-  if (vargs.labels.length > 0) {
+  if (labels.length > 0) {
     const q = k<TableTxLabel>('tx_labels')
       .where({
         userId: auth.userId,
         isDeleted: false
       })
       .whereNotNull('txLabelId')
-      .whereIn('label', vargs.labels)
+      .whereIn('label', labels)
       .select('txLabelId')
     const r = await q
     labelIds = r.map(r => r.txLabelId!)
   }
 
   const isQueryModeAll = vargs.labelQueryMode === 'all'
-  if (isQueryModeAll && labelIds.length < vargs.labels.length)
+  if (isQueryModeAll && labelIds.length < labels.length)
     // all the required labels don't exist, impossible to satisfy.
     return r
 
-  if (!isQueryModeAll && labelIds.length === 0 && vargs.labels.length > 0)
+  if (!isQueryModeAll && labelIds.length === 0 && labels.length > 0)
     // any and only non-existing labels, impossible to satisfy.
     return r
 
   const columns: string[] = [
     'transactionId',
+    'reference',
     'txid',
     'satoshis',
     'status',
@@ -58,7 +149,10 @@ export async function listActions(
     'version',
     'lockTime'
   ]
-  const stati: string[] = ['completed', 'unprocessed', 'sending', 'unproven', 'unsigned', 'nosend', 'nonfinal']
+
+  const stati: string[] = specOp?.setStatusFilter
+    ? specOp.setStatusFilter()
+    : ['completed', 'unprocessed', 'sending', 'unproven', 'unsigned', 'nosend', 'nonfinal']
 
   const noLabels = labelIds.length === 0
 
@@ -96,6 +190,10 @@ export async function listActions(
   q.limit(limit).offset(offset).orderBy('transactionId', 'asc')
 
   const txs: Partial<TableTransaction>[] = await q
+
+  if (specOp?.postProcess) {
+    await specOp.postProcess(storage, auth, vargs, specOpLabels, txs)
+  }
 
   if (!limit || txs.length < limit) r.totalActions = txs.length
   else {
@@ -181,6 +279,5 @@ export async function listActions(
       })
     )
   }
-
   return r
 }

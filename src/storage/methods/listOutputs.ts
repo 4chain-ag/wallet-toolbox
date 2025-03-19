@@ -4,10 +4,11 @@ import { asString, sdk, verifyId, verifyInteger, verifyOne } from '../../index.c
 import { StorageKnex } from '../StorageKnex'
 import { ValidListOutputsArgs } from '../../sdk'
 
-interface SpecOp {
+interface ListOutputsSpecOp {
   name: string
   useBasket?: string
   ignoreLimit?: boolean
+  includeOutputScripts?: boolean
   resultFromTags?: (
     s: StorageKnex,
     auth: sdk.AuthId,
@@ -40,7 +41,7 @@ interface SpecOp {
   tagsParamsCount?: number
 }
 
-const basketToSpecOp: Record<string, SpecOp> = {
+const basketToSpecOp: Record<string, ListOutputsSpecOp> = {
   [sdk.specOpWalletBalance]: {
     name: 'totalOutputsIsWalletBalance',
     useBasket: 'default',
@@ -61,7 +62,8 @@ const basketToSpecOp: Record<string, SpecOp> = {
     name: 'invalidChangeOutputs',
     useBasket: 'default',
     ignoreLimit: true,
-    tagsToIntercept: ['release'],
+    includeOutputScripts: true,
+    tagsToIntercept: ['release', 'all'],
     filterOutputs: async (
       s: StorageKnex,
       auth: sdk.AuthId,
@@ -71,22 +73,31 @@ const basketToSpecOp: Record<string, SpecOp> = {
     ): Promise<TableOutput[]> => {
       const filteredOutputs: TableOutput[] = []
       for (const o of outputs) {
-        let ok = false
+        await s.validateOutputScript(o)
+        let ok: boolean | undefined = false
+        let r: sdk.GetUtxoStatusResult
         if (o.lockingScript && o.lockingScript.length > 0) {
-          const r = await s.getServices().getUtxoStatus(asString(o.lockingScript), 'script')
+          r = await s.getServices().getUtxoStatus(asString(o.lockingScript), 'script')
           if (r.status === 'success' && r.isUtxo && r.details?.length > 0) {
             if (r.details.some(d => d.txid === o.txid && d.satoshis === o.satoshis && d.index === o.vout)) {
               ok = true
+            } else {
+              ok = false
             }
+          } else {
+            ok = false
           }
+        } else {
+          ok = undefined
         }
-        if (!ok) {
+        if (ok === false) {
           filteredOutputs.push(o)
         }
       }
       if (specOpTags.indexOf('release') >= 0) {
         for (const o of filteredOutputs) {
           await s.updateOutput(o.outputId, { spendable: false })
+          o.spendable = false
         }
       }
       return filteredOutputs
@@ -149,7 +160,7 @@ export async function listOutputs(
         }
     */
 
-  let specOp: SpecOp | undefined = undefined
+  let specOp: ListOutputsSpecOp | undefined = undefined
   let basketId: number | undefined = undefined
   const basketsById: Record<number, TableOutputBasket> = {}
   if (vargs.basket) {
@@ -184,6 +195,9 @@ export async function listOutputs(
     for (const t of ts) {
       if (specOp.tagsToIntercept.length === 0 || specOp.tagsToIntercept.indexOf(t) >= 0) {
         specOpTags.push(t)
+        if (t === 'all') {
+          basketId = undefined
+        }
       } else {
         tags.push(t)
       }

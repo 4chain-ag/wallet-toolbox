@@ -48,6 +48,8 @@ export type Chain = 'main' | 'test'
  * invalid: rawTx is structuraly invalid or was rejected by the network. Will never be re-attempted or completed.
  *
  * completed: proven_txs record added, and notifications are complete.
+ *
+ * unfail: asigned to force review of a currently invalid ProvenTxReq.
  */
 export type ProvenTxReqStatus =
   | 'sending'
@@ -62,6 +64,7 @@ export type ProvenTxReqStatus =
   | 'completed'
   | 'invalid'
   | 'doubleSpend'
+  | 'unfail'
 
 export const ProvenTxReqTerminalStatus: ProvenTxReqStatus[] = ['completed', 'invalid', 'doubleSpend']
 
@@ -77,7 +80,16 @@ export const ProvenTxReqNonTerminalStatus: ProvenTxReqStatus[] = [
   'unconfirmed'
 ]
 
-export type TransactionStatus = 'completed' | 'failed' | 'unprocessed' | 'sending' | 'unproven' | 'unsigned' | 'nosend'
+export type TransactionStatus =
+  | 'completed'
+  | 'failed'
+  | 'unprocessed'
+  | 'sending'
+  | 'unproven'
+  | 'unsigned'
+  | 'nosend'
+  | 'nonfinal'
+  | 'unfail'
 
 export interface Paged {
   limit: number
@@ -135,6 +147,8 @@ export const specOpWalletBalance = '893b7646de0e1c9f741bd6e9169b76a8847ae34adef7
  * Returns currently spendable wallet change outputs that fail to validate as unspent transaction outputs.
  *
  * Optional tag value 'release'. If present, updates invalid change outputs to not spendable.
+ *
+ * Optional tag value 'all'. If present, processes all spendable true outputs, independent of baskets.
  */
 export const specOpInvalidChange = '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57'
 
@@ -153,6 +167,32 @@ export const specOpSetWalletChangeParams = 'a4979d28ced8581e9c1c92f1001cc7cb3aab
  * @param basket Output basket name value.
  * @returns true iff the `basket` name is a reserved `listOutputs` special operation identifier.
  */
-export function isSpecOp(basket: string): boolean {
+export function isListOutputsSpecOp(basket: string): boolean {
   return [specOpWalletBalance, specOpInvalidChange, specOpSetWalletChangeParams].indexOf(basket) >= 0
+}
+
+/**
+ * `listActions` special operation label name value.
+ *
+ * Processes only actions currently with status 'nosend'
+ *
+ * Optional label value 'abort'. If present, runs abortAction on all the actions returned.
+ */
+export const specOpNoSendActions = 'ac6b20a3bb320adafecd637b25c84b792ad828d3aa510d05dc841481f664277d'
+
+/**
+ * `listActions` special operation label name value.
+ *
+ * Processes only actions currently with status 'failed'
+ *
+ * Optional label value 'unfail'. If present, sets status to 'unfail', which queues them for attempted recovery by the Monitor.
+ */
+export const specOpFailedActions = '97d4eb1e49215e3374cc2c1939a7c43a55e95c7427bf2d45ed63e3b4e0c88153'
+
+/**
+ * @param label Action / Transaction label name value.
+ * @returns true iff the `label` name is a reserved `listActions` special operation identifier.
+ */
+export function isListActionsSpecOp(label: string): boolean {
+  return [specOpNoSendActions, specOpFailedActions].indexOf(label) >= 0
 }

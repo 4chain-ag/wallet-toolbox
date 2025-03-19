@@ -1,6 +1,6 @@
 import { createSyncMap, sdk, SyncMap, TableOutputBasket } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { EntityOutputBasket } from '../../../../../src/storage/schema/entities/OutputBasket'
+import { EntityOutputBasket } from '../EntityOutputBasket'
 
 describe('OutputBasket class method tests', () => {
   jest.setTimeout(99999999)

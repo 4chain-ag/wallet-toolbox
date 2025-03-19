@@ -198,7 +198,7 @@ export class StorageMySQLDojoReader extends StorageReader implements sdk.WalletS
         reference: forceToBase64(d.referenceNumber),
         isOutgoing: !!d.isOutgoing,
         satoshis: verifyInteger(d.amount),
-        description: verifyTruthy(d.note || ''),
+        description: verifyTruthy(d.note || '12345'),
         provenTxId: verifyOptionalInteger(d.provenTxId),
         version: verifyOptionalInteger(d.version),
         lockTime: verifyOptionalInteger(d.lockTime),

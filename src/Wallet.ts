@@ -84,6 +84,13 @@ import { internalizeAction } from './signer/methods/internalizeAction'
 import { WalletSettingsManager } from './WalletSettingsManager'
 import { queryOverlay, transformVerifiableCertificatesWithTrust } from './utility/identityUtils'
 import { maxPossibleSatoshis } from './storage/methods/generateChange'
+import {
+  specOpFailedActions,
+  specOpInvalidChange,
+  specOpNoSendActions,
+  specOpSetWalletChangeParams,
+  specOpWalletBalance
+} from './sdk'
 
 export interface WalletArgs {
   chain: sdk.Chain
@@ -129,6 +136,10 @@ export class Wallet implements WalletInterface, ProtoWallet {
    * in the inputBEEF.
    */
   includeAllSourceTransactions: boolean = true
+  /**
+   * If true, txids that are known to the wallet's party beef do not need to be returned from storage.
+   */
+  autoKnownTxids: boolean = false
   /**
    * If true, beefs returned to the user may contain txidOnly transactions.
    */
@@ -370,7 +381,9 @@ export class Wallet implements WalletInterface, ProtoWallet {
   ): Promise<ListOutputsResult> {
     sdk.validateOriginator(originator)
     const { vargs } = this.validateAuthAndArgs(args, sdk.validateListOutputsArgs)
-    vargs.knownTxids = this.getKnownTxids()
+    if (this.autoKnownTxids && !vargs.knownTxids) {
+      vargs.knownTxids = this.getKnownTxids()
+    }
     const r = await this.storage.listOutputs(vargs)
     if (r.BEEF) {
       this.beef.mergeBeefFromParty(this.storageParty, r.BEEF)
@@ -664,7 +677,9 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
     if (!args.options) args.options = {}
     args.options.trustSelf ||= this.trustSelf
-    args.options.knownTxids = this.getKnownTxids(args.options.knownTxids)
+    if (this.autoKnownTxids && !args.options.knownTxids) {
+      args.options.knownTxids = this.getKnownTxids(args.options.knownTxids)
+    }
 
     const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateCreateActionArgs)
     vargs.includeAllSourceTransactions = this.includeAllSourceTransactions
@@ -846,14 +861,28 @@ export class Wallet implements WalletInterface, ProtoWallet {
   }
 
   /**
-   * Uses `listOutputs` to iterate through all spendable outputs in the 'default' (change) basket.
-   *
-   * Outputs in the 'default' basket are managed by the wallet and MUST NOT USED AS UNMANAGED INPUTS.
+   * Uses `listOutputs` special operation to compute the total value (of satoshis) for
+   * all spendable outputs in a basket (which defaults to the change 'default' basket).
    *
    * @param {string} basket - Optional. Defaults to 'default', the wallet change basket.
-   * @returns { total: number, utxos: { satoshis: number, outpoint: string }[] }
+   * @returns {number} sum of output satoshis
    */
-  async balance(basket: string = 'default'): Promise<sdk.WalletBalance> {
+  async balance(basket: string = 'default'): Promise<number> {
+    const args: ListOutputsArgs = {
+      basket: specOpWalletBalance
+    }
+    const r = await this.listOutputs(args)
+    return r.totalOutputs
+  }
+
+  /**
+   * Uses `listOutputs` to iterate over chunks of up to 1000 outputs to
+   * compute the sum of output satoshis.
+   *
+   * @param {string} basket - Optional. Defaults to 'default', the wallet change basket.
+   * @returns {sdk.WalletBalance} total sum of output satoshis and utxo details (satoshis and outpoints)
+   */
+  async balanceAndUtxos(basket: string = 'default'): Promise<sdk.WalletBalance> {
     const r: sdk.WalletBalance = { total: 0, utxos: [] }
     let offset = 0
     for (;;) {
@@ -869,6 +898,76 @@ export class Wallet implements WalletInterface, ProtoWallet {
       }
       offset += change.outputs.length
     }
+    return r
+  }
+
+  /**
+   * Uses `listOutputs` special operation to review the spendability via `Services` of
+   * outputs currently considered spendable. Returns the outputs that fail to verify.
+   *
+   * Ignores the `limit` and `offset` properties.
+   *
+   * @param all Defaults to false. If false, only change outputs ('default' basket) are reviewed. If true, all spendable outputs are reviewed.
+   * @param release Defaults to false. If true, sets outputs that fail to verify to un-spendable (spendable: false)
+   * @param optionalArgs Optional. Additional tags will constrain the outputs processed.
+   * @returns outputs which are/where considered spendable but currently fail to verify as spendable.
+   */
+  async reviewSpendableOutputs(
+    all = false,
+    release = false,
+    optionalArgs?: Partial<ListOutputsArgs>
+  ): Promise<ListOutputsResult> {
+    const args: ListOutputsArgs = {
+      ...(optionalArgs || {}),
+      basket: specOpInvalidChange
+    }
+    args.tags ||= []
+    if (all) args.tags.push('all')
+    if (release) args.tags.push('release')
+    const r = await this.listOutputs(args)
+    return r
+  }
+
+  /**
+   * Uses `listOutputs` special operation to update the 'default' basket's automatic
+   * change generation parameters.
+   *
+   * @param count target number of change UTXOs to maintain.
+   * @param satoshis target value for new change outputs.
+   */
+  async setWalletChangeParams(count: number, satoshis: number): Promise<void> {
+    const args: ListOutputsArgs = {
+      basket: specOpSetWalletChangeParams,
+      tags: [count.toString(), satoshis.toString()]
+    }
+    await this.listOutputs(args)
+  }
+
+  /**
+   * Uses `listActions` special operation to return only actions with status 'nosend'.
+   *
+   * @param abort Defaults to false. If true, runs `abortAction` on each 'nosend' action.
+   * @returns {ListActionsResult} start `listActions` result restricted to 'nosend' (or 'failed' if aborted) actions.
+   */
+  async listNoSendActions(args: ListActionsArgs, abort = false): Promise<ListActionsResult> {
+    const { vargs } = this.validateAuthAndArgs(args, sdk.validateListActionsArgs)
+    vargs.labels.push(specOpNoSendActions)
+    if (abort) vargs.labels.push('abort')
+    const r = await this.storage.listActions(vargs)
+    return r
+  }
+
+  /**
+   * Uses `listActions` special operation to return only actions with status 'failed'.
+   *
+   * @param unfail Defaults to false. If true, queues the action for attempted recovery.
+   * @returns {ListActionsResult} start `listActions` result restricted to 'failed' status actions.
+   */
+  async listFailedActions(args: ListActionsArgs, unfail = false): Promise<ListActionsResult> {
+    const { vargs } = this.validateAuthAndArgs(args, sdk.validateListActionsArgs)
+    vargs.labels.push(specOpFailedActions)
+    if (unfail) vargs.labels.push('unfail')
+    const r = await this.storage.listActions(vargs)
     return r
   }
 }

@@ -8,8 +8,8 @@ import { StorageMySQLDojoReader } from '../../../src/storage/sync'
 import { _tu, TestSetup1Wallet } from '../../utils/TestUtilsWalletStorage'
 
 import * as dotenv from 'dotenv'
-
 dotenv.config()
+const main_satoshi_shop = process.env.MAIN_SATOSHI_SHOP || ''
 
 /**
  * NOTICE: These tests are designed to chain one after the other.
@@ -64,16 +64,16 @@ describe('Wallet sync tests', () => {
   })
 
   test.skip('0a sync production dojo to local MySQL', async () => {
-    console.log('Importing from production dojo to local MySQL productiondojotone')
-    // production faucet key
-    const identityKey = '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // process.env.MY_MAIN_IDENTITY || ''
-    const rootKeyHex = env.devKeys[identityKey]
     const chain: sdk.Chain = 'main'
+    const env = _tu.getEnv(chain)
+    console.log('Importing from production dojo to local MySQL productiondojotone')
+    const identityKey = main_satoshi_shop
+    const rootKeyHex = env.devKeys[identityKey]
     const connection = JSON.parse(process.env.MAIN_DOJO_CONNECTION || '')
     const readerKnex = _tu.createMySQLFromConnection(connection)
     const reader = new StorageMySQLDojoReader({ chain, knex: readerKnex })
     const writer = await _tu.createMySQLTestWallet({
-      databaseName: 'productiondojofaucet',
+      databaseName: 'main_satoshi_shop',
       chain: 'main',
       rootKeyHex,
       dropAll: true
@@ -85,23 +85,23 @@ describe('Wallet sync tests', () => {
     await writer.activeStorage.destroy()
   })
 
-  test.skip('0b sweep mysql dojo sync to new sqlite', async () => {
+  test.skip('0b sweep mysql dojo sync to another wallet', async () => {
     const chain: sdk.Chain = 'main'
-    const identityKey = '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // prod faucet
-    //const identityKeyTone = process.env.MY_MAIN_IDENTITY || ''
+    const env = _tu.getEnv(chain)
+    // const prod_faucet = '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // prod faucet
+    // const identityKeyTone = process.env.MY_MAIN_IDENTITY || ''
+    const identityKey = main_satoshi_shop
     const rootKeyHex = env.devKeys[identityKey]
 
     const sweepFrom = await _tu.createMySQLTestWallet({
-      databaseName: 'productiondojofaucet',
+      databaseName: 'main_satoshi_shop',
       chain,
       rootKeyHex
     })
 
-    const sweepTo = await _tu.createSQLiteTestWallet({
-      filePath: '/Users/tone/Kz/tone42.sqlite',
-      databaseName: 'tone42',
-      chain,
-      rootKeyHex
+    const sweepTo = await _tu.createTestWalletWithStorageClient({
+      rootKeyHex: env.devKeys[env.identityKey],
+      chain
     })
 
     //await sweepTo.activeStorage.updateProvenTxReq(2, { status: 'invalid' })

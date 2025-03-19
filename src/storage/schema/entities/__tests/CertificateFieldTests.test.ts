@@ -1,6 +1,6 @@
 import { createSyncMap, sdk, SyncMap, TableCertificate, TableCertificateField } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { EntityCertificateField } from '../../../../../src/storage/schema/entities/CertificateField'
+import { EntityCertificateField } from '../EntityCertificateField'
 
 describe('CertificateField class method tests', () => {
   jest.setTimeout(99999999)

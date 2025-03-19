@@ -1,4 +1,4 @@
-import { EntityUser } from '../../../../../src/storage/schema/entities/User'
+import { EntityUser } from '../EntityUser'
 import { createSyncMap, sdk, SyncMap, TableUser } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 describe('User class method tests', () => {

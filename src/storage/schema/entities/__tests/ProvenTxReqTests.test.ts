@@ -1,7 +1,7 @@
 import * as bsv from '@bsv/sdk'
 import { createSyncMap, sdk, SyncMap, TableProvenTxReq } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { EntityProvenTxReq, ProvenTxReqHistorySummaryApi } from '../../../../../src/storage/schema/entities/ProvenTxReq'
+import { EntityProvenTxReq, ProvenTxReqHistorySummaryApi } from '../EntityProvenTxReq'
 
 describe('ProvenTxReq class method tests', () => {
   jest.setTimeout(99999999)

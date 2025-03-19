@@ -1,6 +1,6 @@
 import { createSyncMap, sdk, SyncMap, TableOutput } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { EntityOutput } from '../../../../../src/storage/schema/entities/Output'
+import { EntityOutput } from '../EntityOutput'
 
 describe('Output class method tests', () => {
   jest.setTimeout(99999999)

@@ -101,7 +101,7 @@ export class StorageKnex extends StorageProvider implements sdk.WalletStoragePro
         rawTx = Array.from(r.rawTx)
       } else {
         let rs: { rawTx: Buffer | null }[] = await this.toDb(trx).raw(
-          `select ${this.dbTypeSubstring('rawTx', offset! + 1, length)} as rawTx from proven_tx_reqs where txid = '${txid}' and status in ('unsent', 'nosend', 'sending', 'unmined', 'completed')`
+          `select ${this.dbTypeSubstring('rawTx', offset! + 1, length)} as rawTx from proven_tx_reqs where txid = '${txid}' and status in ('unsent', 'nosend', 'sending', 'unmined', 'completed', 'unfail')`
         )
         if (this.dbtype === 'MySQL') rs = (rs as unknown as { rawTx: Buffer | null }[][])[0]
         const r = verifyOneOrNone(rs)

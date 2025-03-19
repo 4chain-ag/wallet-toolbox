@@ -20,12 +20,33 @@ describe('specOps tests', () => {
     await setup.wallet.destroy()
   })
 
-  test('1 wallet invalid change outputs', async () => {
+  test('0a wallet balance method', async () => {
+    const setup = await createSetup('test')
+
+    const r = await setup.wallet.balance('default')
+
+    expect(r > 0).toBe(true)
+
+    await setup.wallet.destroy()
+  })
+
+  test('0b wallet balanceAndUtxos method', async () => {
+    const setup = await createSetup('test')
+
+    const r = await setup.wallet.balanceAndUtxos('default')
+
+    expect(r.total > 0).toBe(true)
+    expect(r.utxos.length === 0).toBe(true)
+
+    await setup.wallet.destroy()
+  })
+
+  test('1 wallet invalid change outputs specOp', async () => {
     const setup = await createSetup('test')
 
     const r = await setup.wallet.listOutputs({
       basket: specOpInvalidChange
-      //tags: ['release', 'foobar']
+      //tags: ['release', 'all']
     })
 
     expect(r.totalOutputs).toBe(0)
@@ -34,7 +55,18 @@ describe('specOps tests', () => {
     await setup.wallet.destroy()
   })
 
-  test('2 update default basket params', async () => {
+  test('1a wallet reviewSpendableOutputs method', async () => {
+    const setup = await createSetup('test')
+
+    const r = await setup.wallet.reviewSpendableOutputs(false, false, {})
+
+    expect(r.totalOutputs).toBe(0)
+    expect(r.outputs.length).toBe(0)
+
+    await setup.wallet.destroy()
+  })
+
+  test('2 update default basket params specOp', async () => {
     const setup = await createSetup('test')
 
     const before = verifyOne(
@@ -64,6 +96,63 @@ describe('specOps tests', () => {
       basket: specOpSetWalletChangeParams,
       tags: [before.numberOfDesiredUTXOs.toString(), before.minimumDesiredUTXOValue.toString()]
     })
+
+    await setup.wallet.destroy()
+  })
+
+  test('2a update default basket params specOp', async () => {
+    const setup = await createSetup('test')
+
+    const before = verifyOne(
+      await setup.activeStorage.findOutputBaskets({
+        partial: { userId: setup.userId, name: 'default' }
+      })
+    )
+
+    await setup.wallet.setWalletChangeParams(33, 6)
+
+    const after = verifyOne(
+      await setup.activeStorage.findOutputBaskets({
+        partial: { userId: setup.userId, name: 'default' }
+      })
+    )
+
+    expect(after.minimumDesiredUTXOValue).toBe(6)
+    expect(after.numberOfDesiredUTXOs).toBe(33)
+
+    // Restore original values...
+    await setup.wallet.setWalletChangeParams(before.numberOfDesiredUTXOs, before.minimumDesiredUTXOValue)
+
+    await setup.wallet.destroy()
+  })
+
+  test('3 wallet listNoSendActions method', async () => {
+    const setup = await createSetup('test')
+
+    const r = await setup.wallet.listNoSendActions({
+      labels: [
+        // 'abort'
+      ]
+    })
+
+    expect(r.totalActions).toBeGreaterThanOrEqual(0)
+    expect(r.actions.length).toBe(r.totalActions)
+
+    await setup.wallet.destroy()
+  })
+
+  test('4 wallet listFailedActions method', async () => {
+    const setup = await createSetup('test')
+
+    const r = await setup.wallet.listFailedActions({
+      labels: [
+        // 'unfail'
+      ],
+      limit: 1000
+    })
+
+    expect(r.totalActions).toBeGreaterThanOrEqual(0)
+    expect(r.actions.length).toBe(r.totalActions)
 
     await setup.wallet.destroy()
   })

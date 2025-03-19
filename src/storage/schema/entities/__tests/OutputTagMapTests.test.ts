@@ -1,7 +1,7 @@
 import * as bsv from '@bsv/sdk'
 import { createSyncMap, sdk, SyncMap, TableOutputTagMap } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { EntityOutputTagMap } from '../../../../../src/storage/schema/entities/OutputTagMap'
+import { EntityOutputTagMap } from '../EntityOutputTagMap'
 
 describe('OutputTagMap class method tests', () => {
   jest.setTimeout(99999999)

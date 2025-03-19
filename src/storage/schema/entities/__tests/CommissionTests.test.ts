@@ -1,6 +1,6 @@
 import { createSyncMap, sdk, SyncMap, TableCommission, TableTransaction } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { EntityCommission } from '../../../../../src/storage/schema/entities/Commission'
+import { EntityCommission } from '../EntityCommission'
 
 describe('Commission class method tests', () => {
   jest.setTimeout(99999999)

@@ -1,4 +1,4 @@
-import { Beef, Script, Transaction, TransactionInput } from '@bsv/sdk'
+import { Beef, Script, Transaction, TransactionInput, TransactionOutput } from '@bsv/sdk'
 import { asBsvSdkScript, sdk, verifyTruthy } from '../../index.client'
 import { Wallet, PendingStorageInput } from '../../Wallet'
 import { makeChangeLock } from './createAction'
@@ -48,10 +48,20 @@ export function buildSignableTransaction(
       ? makeChangeLock(out, dctr, args, changeKeys, wallet)
       : asBsvSdkScript(out.lockingScript)
 
-    const output = {
+    const output: TransactionOutput = {
       satoshis: out.satoshis,
       lockingScript,
       change
+    }
+    tx.addOutput(output)
+  }
+
+  if (storageOutputs.length === 0) {
+    // Add a dummy output to avoid transaction rejection by processors for having no outputs.
+    const output: TransactionOutput = {
+      satoshis: 0,
+      lockingScript: Script.fromASM('OP_FALSE OP_RETURN 42'),
+      change: false
     }
     tx.addOutput(output)
   }

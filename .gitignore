@@ -35,4 +35,5 @@ out
 out-client
 test.db
 backup_*.sqlite
+backup-*.sqlite
 

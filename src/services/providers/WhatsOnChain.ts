@@ -25,7 +25,8 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
     const response = await this.httpClient.request<string>(`${this.URL}/tx/hash/${txid}/propagation`, requestOptions)
 
-    if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+    // response.statusText is often, but not always 'OK' on success...
+    if (!response.data || !response.ok || response.status !== 200)
       throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
 
     return 0
@@ -45,8 +46,10 @@ export class WhatsOnChain extends SdkWhatsOnChain {
       headers
     }
 
+    const url = `${this.URL}/tx/${txid}/hex`
+
     for (let retry = 0; retry < 2; retry++) {
-      const response = await this.httpClient.request<string>(`${this.URL}/tx/${txid}/hex`, requestOptions)
+      const response = await this.httpClient.request<string>(url, requestOptions)
       if (response.statusText === 'Too Many Requests' && retry < 2) {
         await wait(2000)
         continue
@@ -54,7 +57,8 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
       if (response.status === 404 && response.statusText === 'Not Found') return undefined
 
-      if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+      // response.statusText is often, but not always 'OK' on success...
+      if (!response.data || !response.ok || response.status !== 200)
         throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
 
       return response.data
@@ -163,6 +167,8 @@ export class WhatsOnChain extends SdkWhatsOnChain {
         if (response.ok) {
           const txid = response.data
           r.notes!.push({ ...nn(), what: 'postRawTxSuccess' })
+        } else if (response.data === 'unexpected response code 500: Transaction already in the mempool') {
+          r.notes!.push({ ...nne(), what: 'postRawTxSuccessAlreadyInMempool' })
         } else {
           r.status = 'error'
           const n: ReqHistoryNote = {
@@ -172,14 +178,20 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           if (typeof response.data === 'string') {
             n.data = response.data.slice(0, 128)
             r.data = response.data
+          } else {
+            r.data = ''
           }
           if (typeof response.statusText === 'string') {
-            n.statusText = response.data.slice(0, 128)
-            r.data = `${r.data || ''} ${response.statusText}`
+            n.statusText = response.statusText.slice(0, 128)
+            r.data += `,${response.statusText}`
           }
-          if (typeof response.status === 'string' || typeof response.status === 'number') {
-            n.status = response.data.slice(0, 128)
-            r.data = `${r.data || ''} ${response.status}`
+          if (typeof response.status === 'string') {
+            n.status = (response.status as string).slice(0, 128)
+            r.data += `,${response.status}`
+          }
+          if (typeof response.status === 'number') {
+            n.status = response.status
+            r.data += `,${response.status}`
           }
           r.notes!.push(n)
         }
@@ -245,7 +257,8 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           return r
         }
 
-        if (!response.ok || response.status !== 200 || response.statusText !== 'OK') {
+        // response.statusText is often, but not always 'OK' on success...
+        if (!response.ok || response.status !== 200) {
           r.notes!.push({
             what: 'getMerklePathBadStatus',
             name: r.name,
@@ -335,7 +348,8 @@ export class WhatsOnChain extends SdkWhatsOnChain {
         continue
       }
 
-      if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+      // response.statusText is often, but not always 'OK' on success...
+      if (!response.data || !response.ok || response.status !== 200)
         throw new sdk.WERR_INVALID_OPERATION(`WoC exchangerate response ${response.statusText}`)
 
       const wocrate = response.data
@@ -380,7 +394,8 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           continue
         }
 
-        if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+        // response.statusText is often, but not always 'OK' on success...
+        if (!response.data || !response.ok || response.status !== 200)
           throw new sdk.WERR_INVALID_OPERATION(`WoC exchangerate response ${response.statusText}`)
 
         if (Array.isArray(response.data)) {

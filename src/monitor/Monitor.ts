@@ -9,6 +9,8 @@ import { TaskSendWaiting } from './tasks/TaskSendWaiting'
 import { WalletMonitorTask } from './tasks/WalletMonitorTask'
 import { TaskClock } from './tasks/TaskClock'
 import { TaskNewHeader as TaskNewHeader } from './tasks/TaskNewHeader'
+import { TaskUnFail } from './tasks/TaskUnFail'
+import { TaskCheckNoSends } from './tasks/TaskCheckNoSends'
 
 export type MonitorStorage = WalletStorageManager
 //export type MonitorStorage = sdk.WalletStorage
@@ -108,6 +110,7 @@ export class Monitor {
     this._otherTasks.push(new TaskReviewStatus(this))
     this._otherTasks.push(new TaskSendWaiting(this))
     this._otherTasks.push(new TaskCheckForProofs(this))
+    this._otherTasks.push(new TaskCheckNoSends(this))
 
     this._otherTasks.push(new TaskFailAbandoned(this))
 
@@ -122,9 +125,12 @@ export class Monitor {
     this._tasks.push(new TaskNewHeader(this))
     this._tasks.push(new TaskSendWaiting(this, 8 * this.oneSecond, 7 * this.oneSecond)) // Check every 8 seconds but must be 7 seconds old
     this._tasks.push(new TaskCheckForProofs(this, 2 * this.oneHour)) // Every two hours if no block found
+    this._tasks.push(new TaskCheckNoSends(this))
     this._tasks.push(new TaskFailAbandoned(this, 8 * this.oneMinute))
-    this._tasks.push(new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour))
+    // No purging until invalid transactions are really invalid...
+    //this._tasks.push(new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour))
     this._tasks.push(new TaskReviewStatus(this))
+    this._tasks.push(new TaskUnFail(this))
   }
 
   /**
@@ -136,9 +142,12 @@ export class Monitor {
     this._tasks.push(new TaskNewHeader(this))
     this._tasks.push(new TaskSendWaiting(this, 8 * this.oneSecond, 7 * this.oneSecond)) // Check every 8 seconds but must be 7 seconds old
     this._tasks.push(new TaskCheckForProofs(this, 2 * this.oneHour)) // Every two hours if no block found
+    this._tasks.push(new TaskCheckNoSends(this))
     this._tasks.push(new TaskFailAbandoned(this, 8 * this.oneMinute))
-    this._tasks.push(new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour))
+    // No purging until invalid transactions are really invalid...
+    //this._tasks.push(new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour))
     this._tasks.push(new TaskReviewStatus(this))
+    this._tasks.push(new TaskUnFail(this))
   }
 
   addTask(task: WalletMonitorTask): void {

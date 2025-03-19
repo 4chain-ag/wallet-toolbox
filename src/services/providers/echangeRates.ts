@@ -1,5 +1,4 @@
 import { sdk } from '../../index.client'
-import axios from 'axios'
 
 export async function updateChaintracksFiatExchangeRates(
   targetCurrencies: string[],
@@ -9,7 +8,9 @@ export async function updateChaintracksFiatExchangeRates(
 
   if (!url) throw new sdk.WERR_MISSING_PARAMETER('options.chaintracksFiatExchangeRatesUrl')
 
-  const r = await axios.get(url)
+  const response = await fetch(url)
+  const data = await response.json()
+  const r = { status: response.status, data }
 
   if (r.status !== 200 || !r.data || r.data.status != 'success') {
     throw new sdk.WERR_BAD_REQUEST(`${url} returned status ${r.status}`)
@@ -69,7 +70,9 @@ export interface ExchangeRatesIoApi {
 export async function getExchangeRatesIo(key: string): Promise<ExchangeRatesIoApi> {
   const url = `http://api.exchangeratesapi.io/v1/latest?access_key=${key}`
 
-  const r = await axios.get(url)
+  const response = await fetch(url)
+  const data = await response.json()
+  const r = { status: response.status, data }
 
   if (r.status !== 200 || !r.data) {
     throw new sdk.WERR_BAD_REQUEST(`getExchangeRatesIo returned status ${r.status}`)

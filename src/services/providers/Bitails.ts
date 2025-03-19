@@ -128,9 +128,14 @@ export class Bitails {
             rt.notes!.push({ ...nne(), what: 'postRawsMissingResult', txid })
           } else if (btr.error) {
             // code: -25, message: 'missing-inputs'
-            rt.status = 'error'
+            // code: -27, message: 'already-in-mempool'
             const { code, message } = btr.error
-            rt.notes!.push({ ...nne(), what: 'postRawsError', txid, code, message })
+            if (code === -27) {
+              rt.notes!.push({ ...nne(), what: 'postRawsSuccessAlreadyInMempool' })
+            } else {
+              rt.status = 'error'
+              rt.notes!.push({ ...nne(), what: 'postRawsError', txid, code, message })
+            }
           } else {
             rt.notes!.push({ ...nn(), what: 'postRawsSuccess' })
           }

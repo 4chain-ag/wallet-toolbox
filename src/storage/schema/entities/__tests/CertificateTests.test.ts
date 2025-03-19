@@ -1,6 +1,6 @@
 import { createSyncMap, sdk, TableCertificate } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { EntityCertificate } from '../../../../../src/storage/schema/entities/Certificate'
+import { EntityCertificate } from '../EntityCertificate'
 
 describe('Certificate class method tests', () => {
   jest.setTimeout(99999999)

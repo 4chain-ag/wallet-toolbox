@@ -119,19 +119,15 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 #### Classes
 
-| |
-| --- |
-| [Monitor](#class-monitor) |
-| [MonitorDaemon](#class-monitordaemon) |
-| [TaskCheckForProofs](#class-taskcheckforproofs) |
-| [TaskClock](#class-taskclock) |
-| [TaskFailAbandoned](#class-taskfailabandoned) |
-| [TaskNewHeader](#class-tasknewheader) |
-| [TaskPurge](#class-taskpurge) |
-| [TaskReviewStatus](#class-taskreviewstatus) |
-| [TaskSendWaiting](#class-tasksendwaiting) |
-| [TaskSyncWhenIdle](#class-tasksyncwhenidle) |
-| [WalletMonitorTask](#class-walletmonitortask) |
+| | |
+| --- | --- |
+| [Monitor](#class-monitor) | [TaskPurge](#class-taskpurge) |
+| [MonitorDaemon](#class-monitordaemon) | [TaskReviewStatus](#class-taskreviewstatus) |
+| [TaskCheckForProofs](#class-taskcheckforproofs) | [TaskSendWaiting](#class-tasksendwaiting) |
+| [TaskCheckNoSends](#class-taskchecknosends) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) |
+| [TaskClock](#class-taskclock) | [TaskUnFail](#class-taskunfail) |
+| [TaskFailAbandoned](#class-taskfailabandoned) | [WalletMonitorTask](#class-walletmonitortask) |
+| [TaskNewHeader](#class-tasknewheader) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -298,15 +294,10 @@ export class TaskCheckForProofs extends WalletMonitorTask {
         run: boolean;
     } 
     async runTask(): Promise<string> 
-    async getProofs(reqs: TableProvenTxReq[], indent = 0, countsAsAttempt = false, ignoreStatus = false): Promise<{
-        proven: TableProvenTxReq[];
-        invalid: TableProvenTxReq[];
-        log: string;
-    }> 
 }
 ```
 
-See also: [Monitor](./monitor.md#class-monitor), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Property checkNow
 
@@ -317,31 +308,55 @@ listener can set this true to cause
 static checkNow = false
 ```
 
-###### Method getProofs
+###### Method trigger
 
-Process an array of table.ProvenTxReq (typically with status 'unmined' or 'unknown')
-
-If req is invalid, set status 'invalid'
-
-Verify the requests are valid, lookup proofs or updated transaction status using the array of getProofServices,
-
-When proofs are found, create new ProvenTxApi records and transition the requests' status to 'unconfirmed' or 'notifying',
-depending on chaintracks succeeding on proof verification.
-
-Increments attempts if proofs where requested.
+Normally triggered by checkNow getting set by new block header found event from chaintracks
 
 ```ts
-async getProofs(reqs: TableProvenTxReq[], indent = 0, countsAsAttempt = false, ignoreStatus = false): Promise<{
-    proven: TableProvenTxReq[];
-    invalid: TableProvenTxReq[];
-    log: string;
-}> 
+trigger(nowMsecsSinceEpoch: number): {
+    run: boolean;
+} 
 ```
-See also: [TableProvenTxReq](./storage.md#interface-tableproventxreq)
 
-Returns
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
-reqs partitioned by status
+---
+##### Class: TaskCheckNoSends
+
+`TaskCheckNoSends` is a WalletMonitor task that retreives merkle proofs for
+'nosend' transactions that MAY have been shared externally.
+
+Unlike intentionally processed transactions, 'nosend' transactions are fully valid
+transactions which have not been processed by the wallet.
+
+By default, this task runs once a day to check if any 'nosend' transaction has
+managed to get mined by some external process.
+
+If a proof is obtained and validated, a new ProvenTx record is created and
+the original ProvenTxReq status is advanced to 'notifying'.
+
+```ts
+export class TaskCheckNoSends extends WalletMonitorTask {
+    static taskName = "CheckNoSends";
+    static checkNow = false;
+    constructor(monitor: Monitor, public triggerMsecs = monitor.oneDay * 1) 
+    trigger(nowMsecsSinceEpoch: number): {
+        run: boolean;
+    } 
+    async runTask(): Promise<string> 
+}
+```
+
+See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
+
+###### Property checkNow
+
+An external service such as the chaintracks new block header
+listener can set this true to cause
+
+```ts
+static checkNow = false
+```
 
 ###### Method trigger
 
@@ -541,6 +556,57 @@ See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.m
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Class: TaskUnFail
+
+Setting provenTxReq status to 'unfail' when 'invalid' will attempt to find a merklePath, and if successful:
+
+1. set the req status to 'unmined'
+2. set the referenced txs to 'unproven'
+3. determine if any inputs match user's existing outputs and if so update spentBy and spendable of those outputs.
+4. set the txs outputs to spendable
+
+If it fails (to find a merklePath), returns the req status to 'invalid'.
+
+```ts
+export class TaskUnFail extends WalletMonitorTask {
+    static taskName = "UnFail";
+    static checkNow = false;
+    constructor(monitor: Monitor, public triggerMsecs = monitor.oneMinute * 10) 
+    trigger(nowMsecsSinceEpoch: number): {
+        run: boolean;
+    } 
+    async runTask(): Promise<string> 
+    async unfail(reqs: TableProvenTxReq[], indent = 0): Promise<{
+        log: string;
+    }> 
+    async unfailReq(req: EntityProvenTxReq, indent: number): Promise<string> 
+}
+```
+
+See also: [EntityProvenTxReq](./storage.md#class-entityproventxreq), [Monitor](./monitor.md#class-monitor), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
+
+###### Property checkNow
+
+Set to true to trigger running this task
+
+```ts
+static checkNow = false
+```
+
+###### Method unfailReq
+
+2. set the referenced txs to 'unproven'
+3. determine if any inputs match user's existing outputs and if so update spentBy and spendable of those outputs.
+4. set the txs outputs to spendable
+
+```ts
+async unfailReq(req: EntityProvenTxReq, indent: number): Promise<string> 
+```
+See also: [EntityProvenTxReq](./storage.md#class-entityproventxreq)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Class: WalletMonitorTask
 
 A monitor task performs some periodic or state triggered maintenance function
@@ -605,6 +671,36 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 #### Functions
 
+##### Function: getProofs
+
+Process an array of table.ProvenTxReq (typically with status 'unmined' or 'unknown')
+
+If req is invalid, set status 'invalid'
+
+Verify the requests are valid, lookup proofs or updated transaction status using the array of getProofServices,
+
+When proofs are found, create new ProvenTxApi records and transition the requests' status to 'unconfirmed' or 'notifying',
+depending on chaintracks succeeding on proof verification.
+
+Increments attempts if proofs where requested.
+
+```ts
+export async function getProofs(task: WalletMonitorTask, reqs: TableProvenTxReq[], indent = 0, countsAsAttempt = false, ignoreStatus = false): Promise<{
+    proven: TableProvenTxReq[];
+    invalid: TableProvenTxReq[];
+    log: string;
+}> 
+```
+
+See also: [TableProvenTxReq](./storage.md#interface-tableproventxreq), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
+
+Returns
+
+reqs partitioned by status
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 #### Types
 
 ##### Type: MonitorStorage

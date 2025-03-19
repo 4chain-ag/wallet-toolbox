@@ -430,7 +430,7 @@ export abstract class TestUtilsWalletStorage {
       }
     }
 
-    const balance = await setup.wallet.balance()
+    const balance = await setup.wallet.balanceAndUtxos()
 
     if (balance.total < 1000) {
       throw new sdk.WERR_INSUFFICIENT_FUNDS(1000, 1000 - balance.total)

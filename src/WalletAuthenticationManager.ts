@@ -50,7 +50,10 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
                 inputDescription: 'Fund from faucet'
               }
             ],
-            description: 'Fund wallet'
+            description: 'Fund wallet',
+            options: {
+              acceptDelayedBroadcast: false
+            }
           },
           adminOriginator
         )

@@ -1,7 +1,7 @@
 import * as bsv from '@bsv/sdk'
 import { createSyncMap, sdk, SyncMap } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { EntityProvenTx } from '../../../../../src/storage/schema/entities/ProvenTx'
+import { EntityProvenTx } from '../EntityProvenTx'
 
 describe('ProvenTx class method tests', () => {
   jest.setTimeout(99999999)
