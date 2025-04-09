@@ -103,8 +103,8 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     }
   }
 
-  async refreshFromStorage(storage: EntityStorage | WalletStorageManager): Promise<void> {
-    const newApi = verifyOne(await storage.findProvenTxReqs({ partial: { provenTxReqId: this.id } }))
+  async refreshFromStorage(storage: EntityStorage | WalletStorageManager, trx?: sdk.TrxToken): Promise<void> {
+    const newApi = verifyOne(await storage.findProvenTxReqs({ partial: { provenTxReqId: this.id }, trx }))
     this.api = newApi
     this.unpackApi()
   }

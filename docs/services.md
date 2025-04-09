@@ -25,9 +25,12 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | --- |
 | [ArcConfig](#interface-arcconfig) |
 | [ArcMinerGetTxData](#interface-arcminergettxdata) |
+| [BaseBlockHeader](#interface-baseblockheader) |
 | [BitailsConfig](#interface-bitailsconfig) |
 | [BitailsMerkleProof](#interface-bitailsmerkleproof) |
+| [BlockHeader](#interface-blockheader) |
 | [ExchangeRatesIoApi](#interface-exchangeratesioapi) |
+| [LiveBlockHeader](#interface-liveblockheader) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -119,6 +122,75 @@ export interface ArcMinerGetTxData {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Interface: BaseBlockHeader
+
+These are fields of 80 byte serialized header in order whose double sha256 hash is a block's hash value
+and the next block's previousHash value.
+
+All block hash values and merkleRoot values are 32 byte hex string values with the byte order reversed from the serialized byte order.
+
+```ts
+export interface BaseBlockHeader {
+    version: number;
+    previousHash: string;
+    merkleRoot: string;
+    time: number;
+    bits: number;
+    nonce: number;
+}
+```
+
+###### Property bits
+
+Block header bits value. Serialized length is 4 bytes.
+
+```ts
+bits: number
+```
+
+###### Property merkleRoot
+
+Root hash of the merkle tree of all transactions in this block. Serialized length is 32 bytes.
+
+```ts
+merkleRoot: string
+```
+
+###### Property nonce
+
+Block header nonce value. Serialized length is 4 bytes.
+
+```ts
+nonce: number
+```
+
+###### Property previousHash
+
+Hash of previous block's block header. Serialized length is 32 bytes.
+
+```ts
+previousHash: string
+```
+
+###### Property time
+
+Block header time value. Serialized length is 4 bytes.
+
+```ts
+time: number
+```
+
+###### Property version
+
+Block header version value. Serialized length is 4 bytes.
+
+```ts
+version: number
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Interface: BitailsConfig
 
 ```ts
@@ -161,6 +233,38 @@ export interface BitailsMerkleProof {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Interface: BlockHeader
+
+A `BaseBlockHeader` extended with its computed hash and height in its chain.
+
+```ts
+export interface BlockHeader extends BaseBlockHeader {
+    height: number;
+    hash: string;
+}
+```
+
+See also: [BaseBlockHeader](./services.md#interface-baseblockheader)
+
+###### Property hash
+
+The double sha256 hash of the serialized `BaseBlockHeader` fields.
+
+```ts
+hash: string
+```
+
+###### Property height
+
+Height of the header, starting from zero.
+
+```ts
+height: number
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Interface: ExchangeRatesIoApi
 
 ```ts
@@ -171,6 +275,72 @@ export interface ExchangeRatesIoApi {
     date: string;
     rates: Record<string, number>;
 }
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: LiveBlockHeader
+
+The "live" portion of the block chain is recent history that can conceivably be subject to reorganizations.
+The additional fields support tracking orphan blocks, chain forks, and chain reorgs.
+
+```ts
+export interface LiveBlockHeader extends BlockHeader {
+    chainWork: string;
+    isChainTip: boolean;
+    isActive: boolean;
+    headerId: number;
+    previousHeaderId: number | null;
+}
+```
+
+See also: [BlockHeader](./services.md#interface-blockheader)
+
+###### Property chainWork
+
+The cummulative chainwork achieved by the addition of this block to the chain.
+Chainwork only matters in selecting the active chain.
+
+```ts
+chainWork: string
+```
+
+###### Property headerId
+
+As there may be more than one header with identical height values due to orphan tracking,
+headers are assigned a unique headerId while part of the "live" portion of the block chain.
+
+```ts
+headerId: number
+```
+
+###### Property isActive
+
+True only if this header is currently on the active chain.
+
+```ts
+isActive: boolean
+```
+
+###### Property isChainTip
+
+True only if this header is currently a chain tip. e.g. There is no header that follows it by previousHash or previousHeaderId.
+
+```ts
+isChainTip: boolean
+```
+
+###### Property previousHeaderId
+
+Every header in the "live" portion of the block chain is linked to an ancestor header through
+both its previousHash and previousHeaderId properties.
+
+Due to forks, there may be multiple headers with identical `previousHash` and `previousHeaderId` values.
+Of these, only one (the header on the active chain) will have `isActive` === true.
+
+```ts
+previousHeaderId: number | null
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -295,7 +465,7 @@ export class Bitails {
     constructor(chain: sdk.Chain = "main", config: BitailsConfig = {}) 
     getHttpHeaders(): Record<string, string> 
     async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> 
-    async postRaws(raws: HexString[]): Promise<sdk.PostBeefResult> 
+    async postRaws(raws: HexString[], txids?: string[]): Promise<sdk.PostBeefResult> 
     async getMerklePath(txid: string, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
 }
 ```
@@ -316,7 +486,7 @@ See also: [PostBeefResult](./client.md#interface-postbeefresult)
 ###### Method postRaws
 
 ```ts
-async postRaws(raws: HexString[]): Promise<sdk.PostBeefResult> 
+async postRaws(raws: HexString[], txids?: string[]): Promise<sdk.PostBeefResult> 
 ```
 See also: [PostBeefResult](./client.md#interface-postbeefresult)
 
@@ -324,6 +494,8 @@ Argument Details
 
 + **raws**
   + Array of raw transactions to broadcast as hex strings
++ **txids**
+  + Array of txids for transactions in raws for which results are requested, remaining raws are supporting only.
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -408,6 +580,8 @@ export class Services implements sdk.WalletServices {
     getRawTxServices: ServiceCollection<sdk.GetRawTxService>;
     postBeefServices: ServiceCollection<sdk.PostBeefService>;
     getUtxoStatusServices: ServiceCollection<sdk.GetUtxoStatusService>;
+    getStatusForTxidsServices: ServiceCollection<sdk.GetStatusForTxidsService>;
+    getScriptHashHistoryServices: ServiceCollection<sdk.GetScriptHashHistoryService>;
     updateFiatExchangeRateServices: ServiceCollection<sdk.UpdateFiatExchangeRateService>;
     chain: sdk.Chain;
     constructor(optionsOrChain: sdk.Chain | sdk.WalletServicesOptions) 
@@ -418,7 +592,10 @@ export class Services implements sdk.WalletServices {
     get getRawTxsCount() 
     get postBeefServicesCount() 
     get getUtxoStatsCount() 
-    async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat, useNext?: boolean): Promise<sdk.GetUtxoStatusResult> 
+    async getStatusForTxids(txids: string[], useNext?: boolean): Promise<sdk.GetStatusForTxidsResult> 
+    hashOutputScript(script: string): string 
+    async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat, outpoint?: string, useNext?: boolean): Promise<sdk.GetUtxoStatusResult> 
+    async getScriptHashHistory(hash: string, useNext?: boolean): Promise<sdk.GetScriptHashHistoryResult> 
     postBeefCount = 0;
     async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> 
     async getRawTx(txid: string, useNext?: boolean): Promise<sdk.GetRawTxResult> 
@@ -433,7 +610,22 @@ export class Services implements sdk.WalletServices {
 }
 ```
 
-See also: [ARC](./services.md#class-arc), [Bitails](./services.md#class-bitails), [BlockHeader](./client.md#interface-blockheader), [Chain](./client.md#type-chain), [FiatExchangeRates](./client.md#interface-fiatexchangerates), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetMerklePathService](./client.md#type-getmerklepathservice), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetRawTxService](./client.md#type-getrawtxservice), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [GetUtxoStatusService](./client.md#type-getutxostatusservice), [PostBeefResult](./client.md#interface-postbeefresult), [PostBeefService](./client.md#type-postbeefservice), [ServiceCollection](./services.md#class-servicecollection), [UpdateFiatExchangeRateService](./client.md#type-updatefiatexchangerateservice), [WalletServices](./client.md#interface-walletservices), [WalletServicesOptions](./client.md#interface-walletservicesoptions), [WhatsOnChain](./services.md#class-whatsonchain)
+See also: [ARC](./services.md#class-arc), [Bitails](./services.md#class-bitails), [BlockHeader](./services.md#interface-blockheader), [Chain](./client.md#type-chain), [FiatExchangeRates](./client.md#interface-fiatexchangerates), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetMerklePathService](./client.md#type-getmerklepathservice), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetRawTxService](./client.md#type-getrawtxservice), [GetScriptHashHistoryResult](./client.md#interface-getscripthashhistoryresult), [GetScriptHashHistoryService](./client.md#type-getscripthashhistoryservice), [GetStatusForTxidsResult](./client.md#interface-getstatusfortxidsresult), [GetStatusForTxidsService](./client.md#type-getstatusfortxidsservice), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [GetUtxoStatusService](./client.md#type-getutxostatusservice), [PostBeefResult](./client.md#interface-postbeefresult), [PostBeefService](./client.md#type-postbeefservice), [ServiceCollection](./services.md#class-servicecollection), [UpdateFiatExchangeRateService](./client.md#type-updatefiatexchangerateservice), [WalletServices](./client.md#interface-walletservices), [WalletServicesOptions](./client.md#interface-walletservicesoptions), [WhatsOnChain](./services.md#class-whatsonchain)
+
+###### Method hashOutputScript
+
+```ts
+hashOutputScript(script: string): string 
+```
+
+Returns
+
+script hash in 'hashLE' format, which is the default.
+
+Argument Details
+
++ **script**
+  + Output script to be hashed for `getUtxoStatus` default `outputFormat`
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -442,7 +634,9 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export class WhatsOnChain extends SdkWhatsOnChain {
-    constructor(chain: sdk.Chain = "main", config: WhatsOnChainConfig = {}) 
+    services: Services;
+    constructor(chain: sdk.Chain = "main", config: WhatsOnChainConfig = {}, services?: Services) 
+    async getStatusForTxids(txids: string[]): Promise<sdk.GetStatusForTxidsResult> 
     async getTxPropagation(txid: string): Promise<number> 
     async getRawTx(txid: string): Promise<string | undefined> 
     async getRawTxResult(txid: string): Promise<sdk.GetRawTxResult> 
@@ -450,11 +644,14 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     async postRawTx(rawTx: HexString): Promise<sdk.PostTxResultForTxid> 
     async getMerklePath(txid: string, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
     async updateBsvExchangeRate(rate?: sdk.BsvExchangeRate, updateMsecs?: number): Promise<sdk.BsvExchangeRate> 
-    async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat): Promise<sdk.GetUtxoStatusResult> 
+    async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat, outpoint?: string): Promise<sdk.GetUtxoStatusResult> 
+    async getScriptHashConfirmedHistory(hash: string): Promise<sdk.GetScriptHashHistoryResult> 
+    async getScriptHashUnconfirmedHistory(hash: string): Promise<sdk.GetScriptHashHistoryResult> 
+    async getScriptHashHistory(hash: string): Promise<sdk.GetScriptHashHistoryResult> 
 }
 ```
 
-See also: [BsvExchangeRate](./client.md#interface-bsvexchangerate), [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [PostBeefResult](./client.md#interface-postbeefresult), [PostTxResultForTxid](./client.md#interface-posttxresultfortxid), [SdkWhatsOnChain](./services.md#class-sdkwhatsonchain), [WalletServices](./client.md#interface-walletservices)
+See also: [BsvExchangeRate](./client.md#interface-bsvexchangerate), [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetScriptHashHistoryResult](./client.md#interface-getscripthashhistoryresult), [GetStatusForTxidsResult](./client.md#interface-getstatusfortxidsresult), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [PostBeefResult](./client.md#interface-postbeefresult), [PostTxResultForTxid](./client.md#interface-posttxresultfortxid), [SdkWhatsOnChain](./services.md#class-sdkwhatsonchain), [Services](./services.md#class-services), [WalletServices](./client.md#interface-walletservices)
 
 ###### Method getRawTx
 
@@ -467,6 +664,33 @@ async getRawTx(txid: string): Promise<string | undefined>
 Returns
 
 raw transaction as hex string or undefined if txid not found in mined block.
+
+###### Method getStatusForTxids
+
+POST
+https://api.whatsonchain.com/v1/bsv/main/txs/status
+Content-Type: application/json
+data: "{\"txids\":[\"6815f8014db74eab8b7f75925c68929597f1d97efa970109d990824c25e5e62b\"]}"
+
+result for a mined txid:
+    [{
+       "txid":"294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa",
+       "blockhash":"000000000000000004b5ce6670f2ff27354a1e87d0a01bf61f3307f4ccd358b5",
+       "blockheight":612251,
+       "blocktime":1575841517,
+       "confirmations":278272
+     }]
+
+result for a valid recent txid:
+    [{"txid":"6815f8014db74eab8b7f75925c68929597f1d97efa970109d990824c25e5e62b"}]
+
+result for an unknown txid:
+    [{"txid":"6815f8014db74eab8b7f75925c68929597f1d97efa970109d990824c25e5e62c","error":"unknown"}]
+
+```ts
+async getStatusForTxids(txids: string[]): Promise<sdk.GetStatusForTxidsResult> 
+```
+See also: [GetStatusForTxidsResult](./client.md#interface-getstatusfortxidsresult)
 
 ###### Method getTxPropagation
 
@@ -513,6 +737,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [arcDefaultUrl](#function-arcdefaulturl) |
 | [createDefaultWalletServicesOptions](#function-createdefaultwalletservicesoptions) |
 | [getExchangeRatesIo](#function-getexchangeratesio) |
+| [isBaseBlockHeader](#function-isbaseblockheader) |
+| [isBlockHeader](#function-isblockheader) |
+| [isLive](#function-islive) |
+| [isLiveBlockHeader](#function-isliveblockheader) |
 | [toBinaryBaseBlockHeader](#function-tobinarybaseblockheader) |
 | [updateChaintracksFiatExchangeRates](#function-updatechaintracksfiatexchangerates) |
 | [updateExchangeratesapi](#function-updateexchangeratesapi) |
@@ -555,6 +783,66 @@ See also: [ExchangeRatesIoApi](./services.md#interface-exchangeratesioapi)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Function: isBaseBlockHeader
+
+Type guard function.
+
+```ts
+export function isBaseBlockHeader(header: BaseBlockHeader | BlockHeader | LiveBlockHeader): header is BaseBlockHeader {
+    return typeof header.previousHash === "string";
+}
+```
+
+See also: [BaseBlockHeader](./services.md#interface-baseblockheader), [BlockHeader](./services.md#interface-blockheader), [LiveBlockHeader](./services.md#interface-liveblockheader)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Function: isBlockHeader
+
+Type guard function.
+
+```ts
+export function isBlockHeader(header: BaseBlockHeader | BlockHeader | LiveBlockHeader): header is LiveBlockHeader {
+    return "height" in header && typeof header.previousHash === "string";
+}
+```
+
+See also: [BaseBlockHeader](./services.md#interface-baseblockheader), [BlockHeader](./services.md#interface-blockheader), [LiveBlockHeader](./services.md#interface-liveblockheader)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Function: isLive
+
+Type guard function.
+
+```ts
+export function isLive(header: BlockHeader | LiveBlockHeader): header is LiveBlockHeader {
+    return (header as LiveBlockHeader).headerId !== undefined;
+}
+```
+
+See also: [BlockHeader](./services.md#interface-blockheader), [LiveBlockHeader](./services.md#interface-liveblockheader)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Function: isLiveBlockHeader
+
+Type guard function.
+
+```ts
+export function isLiveBlockHeader(header: BaseBlockHeader | BlockHeader | LiveBlockHeader): header is LiveBlockHeader {
+    return "chainwork" in header && typeof header.previousHash === "string";
+}
+```
+
+See also: [BaseBlockHeader](./services.md#interface-baseblockheader), [BlockHeader](./services.md#interface-blockheader), [LiveBlockHeader](./services.md#interface-liveblockheader)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Function: toBinaryBaseBlockHeader
 
 Serializes a block header as an 80 byte array.
@@ -576,7 +864,7 @@ export function toBinaryBaseBlockHeader(header: sdk.BaseBlockHeader): number[] {
 }
 ```
 
-See also: [BaseBlockHeader](./client.md#interface-baseblockheader), [asArray](./client.md#function-asarray)
+See also: [BaseBlockHeader](./services.md#interface-baseblockheader), [asArray](./client.md#function-asarray)
 
 Returns
 

@@ -9,7 +9,7 @@ import { _tu, TestSetup1Wallet } from '../../utils/TestUtilsWalletStorage'
 
 import * as dotenv from 'dotenv'
 dotenv.config()
-const main_satoshi_shop = process.env.MAIN_SATOSHI_SHOP || ''
+const main_satoshi_shop = process.env.SATOSHI_SHOP_MAIN_IDENTITY || ''
 
 /**
  * NOTICE: These tests are designed to chain one after the other.

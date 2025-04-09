@@ -22,6 +22,8 @@ export class Services implements sdk.WalletServices {
   getRawTxServices: ServiceCollection<sdk.GetRawTxService>
   postBeefServices: ServiceCollection<sdk.PostBeefService>
   getUtxoStatusServices: ServiceCollection<sdk.GetUtxoStatusService>
+  getStatusForTxidsServices: ServiceCollection<sdk.GetStatusForTxidsService>
+  getScriptHashHistoryServices: ServiceCollection<sdk.GetScriptHashHistoryService>
   updateFiatExchangeRateServices: ServiceCollection<sdk.UpdateFiatExchangeRateService>
 
   chain: sdk.Chain
@@ -31,7 +33,7 @@ export class Services implements sdk.WalletServices {
 
     this.options = typeof optionsOrChain === 'string' ? Services.createDefaultOptions(this.chain) : optionsOrChain
 
-    this.whatsonchain = new WhatsOnChain(this.chain, { apiKey: this.options.whatsOnChainApiKey })
+    this.whatsonchain = new WhatsOnChain(this.chain, { apiKey: this.options.whatsOnChainApiKey }, this)
 
     this.arc = new ARC(this.options.arcUrl, this.options.arcConfig)
 
@@ -55,6 +57,14 @@ export class Services implements sdk.WalletServices {
     //prettier-ignore
     this.getUtxoStatusServices = new ServiceCollection<sdk.GetUtxoStatusService>()
       .add({ name: 'WhatsOnChain', service: this.whatsonchain.getUtxoStatus.bind(this.whatsonchain) })
+
+    //prettier-ignore
+    this.getStatusForTxidsServices = new ServiceCollection<sdk.GetStatusForTxidsService>()
+      .add({ name: 'WhatsOnChain', service: this.whatsonchain.getStatusForTxids.bind(this.whatsonchain) })
+
+    //prettier-ignore
+    this.getScriptHashHistoryServices = new ServiceCollection<sdk.GetScriptHashHistoryService>()
+      .add({ name: 'WhatsOnChain', service: this.whatsonchain.getScriptHashHistory.bind(this.whatsonchain) })
 
     //prettier-ignore
     this.updateFiatExchangeRateServices = new ServiceCollection<sdk.UpdateFiatExchangeRateService>()
@@ -100,9 +110,43 @@ export class Services implements sdk.WalletServices {
     return this.getUtxoStatusServices.count
   }
 
+  async getStatusForTxids(txids: string[], useNext?: boolean): Promise<sdk.GetStatusForTxidsResult> {
+    const services = this.getStatusForTxidsServices
+    if (useNext) services.next()
+
+    let r0: sdk.GetStatusForTxidsResult = {
+      name: '<noservices>',
+      status: 'error',
+      error: new sdk.WERR_INTERNAL('No services available.'),
+      results: []
+    }
+
+    for (let tries = 0; tries < services.count; tries++) {
+      const service = services.service
+      const r = await service(txids)
+      if (r.status === 'success') {
+        r0 = r
+        break
+      }
+      services.next()
+    }
+
+    return r0
+  }
+
+  /**
+   * @param script Output script to be hashed for `getUtxoStatus` default `outputFormat`
+   * @returns script hash in 'hashLE' format, which is the default.
+   */
+  hashOutputScript(script: string): string {
+    const hash = Utils.toHex(sha256Hash(Utils.toArray(script, 'hex')))
+    return hash
+  }
+
   async getUtxoStatus(
     output: string,
     outputFormat?: sdk.GetUtxoStatusOutputFormat,
+    outpoint?: string,
     useNext?: boolean
   ): Promise<sdk.GetUtxoStatusResult> {
     const services = this.getUtxoStatusServices
@@ -118,7 +162,7 @@ export class Services implements sdk.WalletServices {
     for (let retry = 0; retry < 2; retry++) {
       for (let tries = 0; tries < services.count; tries++) {
         const service = services.service
-        const r = await service(output, outputFormat)
+        const r = await service(output, outputFormat, outpoint)
         if (r.status === 'success') {
           r0 = r
           break
@@ -127,6 +171,29 @@ export class Services implements sdk.WalletServices {
       }
       if (r0.status === 'success') break
       await wait(2000)
+    }
+    return r0
+  }
+
+  async getScriptHashHistory(hash: string, useNext?: boolean): Promise<sdk.GetScriptHashHistoryResult> {
+    const services = this.getScriptHashHistoryServices
+    if (useNext) services.next()
+
+    let r0: sdk.GetScriptHashHistoryResult = {
+      name: '<noservices>',
+      status: 'error',
+      error: new sdk.WERR_INTERNAL('No services available.'),
+      history: []
+    }
+
+    for (let tries = 0; tries < services.count; tries++) {
+      const service = services.service
+      const r = await service(hash)
+      if (r.status === 'success') {
+        r0 = r
+        break
+      }
+      services.next()
     }
     return r0
   }

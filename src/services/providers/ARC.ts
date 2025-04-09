@@ -170,9 +170,14 @@ export class ARC {
           r.notes!.push({ ...nn(), ...nnr(), what: 'postRawTxSuccess' })
         }
       } else if (typeof response === 'string') {
-        r.notes!.push({ ...nn(), what: 'postRawTxString', response })
+        r.notes!.push({ ...nne(), what: 'postRawTxString', response })
+        r.status = 'error'
+        // response is not normally a string
+        r.serviceError = true
       } else {
         r.status = 'error'
+        // Treat unknown errors as service errors
+        r.serviceError = true
         const n: ReqHistoryNote = {
           ...nn(),
           ...nne(),
@@ -211,6 +216,7 @@ export class ARC {
     } catch (eu: unknown) {
       const e = sdk.WalletError.fromUnknown(eu)
       r.status = 'error'
+      r.serviceError = true
       r.data = `${e.code} ${e.message}`
       r.notes!.push({
         ...nne(),

@@ -1,5 +1,5 @@
 import * as bsv from '@bsv/sdk'
-import { createSyncMap, sdk, SyncMap } from '../../../../../src'
+import { createSyncMap, sdk, sha256Hash, SyncMap } from '../../../../../src'
 import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 import { EntityProvenTx } from '../EntityProvenTx'
 
@@ -46,6 +46,11 @@ describe('ProvenTx class method tests', () => {
 
     const services: sdk.WalletServices = {
       chain: 'test',
+
+      hashOutputScript: (script: string): string => {
+        const hash = bsv.Utils.toHex(sha256Hash(bsv.Utils.toArray(script, 'hex')))
+        return hash
+      },
 
       getRawTx: async (requestedTxid: string) => {
         if (requestedTxid === txid) {
@@ -97,12 +102,26 @@ describe('ProvenTx class method tests', () => {
       getBsvExchangeRate: async () => 0,
       getFiatExchangeRate: async () => 1,
       postBeef: async () => [],
+
+      getStatusForTxids: async () => ({
+        name: 'mock-service',
+        status: 'success',
+        results: []
+      }),
+
       getUtxoStatus: async () => ({
         name: 'mock-service',
         status: 'success',
         isUtxo: true,
         details: []
       }),
+
+      getScriptHashHistory: async () => ({
+        name: 'mock-service',
+        status: 'success',
+        history: []
+      }),
+
       hashToHeader: async () => ({
         version: 1,
         previousHash: 'prev-hash',

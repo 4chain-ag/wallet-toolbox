@@ -1,6 +1,7 @@
 import { ArcConfig, Beef, Transaction as BsvTransaction, ChainTracker, MerklePath } from '@bsv/sdk'
-import { sdk } from '../index.client'
 import { ChaintracksServiceClient } from '../services/chaintracker'
+import { Chain, ReqHistoryNote } from './types'
+import { WalletError } from './WalletError'
 /**
  * Defines standard interfaces to access functionality implemented by external transaction processing services.
  */
@@ -8,7 +9,7 @@ export interface WalletServices {
   /**
    * The chain being serviced.
    */
-  chain: sdk.Chain
+  chain: Chain
 
   /**
    * @returns standard `ChainTracker` service which requires `options.chaintracks` be valid.
@@ -92,6 +93,24 @@ export interface WalletServices {
   postBeef(beef: Beef, txids: string[]): Promise<PostBeefResult[]>
 
   /**
+   * @param script Output script to be hashed for `getUtxoStatus` default `outputFormat`
+   * @returns script hash in 'hashLE' format, which is the default.
+   */
+  hashOutputScript(script: string): string
+
+  /**
+   * For an array of one or more txids, returns for each wether it is a 'known', 'mined', or 'unknown' transaction.
+   *
+   * Primarily useful for determining if a recently broadcast transaction is known to the processing network.
+   *
+   * Also returns the current depth from chain tip if 'mined'.
+   *
+   * @param txids
+   * @param useNext
+   */
+  getStatusForTxids(txids: string[], useNext?: boolean): Promise<GetStatusForTxidsResult>
+
+  /**
    * Attempts to determine the UTXO status of a transaction output.
    *
    * Cycles through configured transaction processing services attempting to get a valid response.
@@ -102,20 +121,24 @@ export interface WalletServices {
    *      'hashLE' little-endian sha256 hash of output script
    *      'hashBE' big-endian sha256 hash of output script
    *      'script' entire transaction output script
-   *      undefined if length of `output` is 32 then 'hashBE`, otherwise 'script'.
+   *      undefined if length of `output` is 32 hex bytes then 'hashBE`, otherwise 'script'.
+   * @param outpoint if valid, result isUtxo is true only if this txid and vout match an unspent occurance of output script. `${txid}.${vout}` format.
    * @param useNext optional, forces skip to next service before starting service requests cycle.
    */
   getUtxoStatus(
     output: string,
     outputFormat?: GetUtxoStatusOutputFormat,
+    outpoint?: string,
     useNext?: boolean
   ): Promise<GetUtxoStatusResult>
+
+  getScriptHashHistory(hash: string, useNext?: boolean): Promise<GetScriptHashHistoryResult>
 
   /**
    * @returns a block header
    * @param hash block hash
    */
-  hashToHeader(hash: string): Promise<sdk.BlockHeader>
+  hashToHeader(hash: string): Promise<BlockHeader>
 
   /**
    * @returns whether the locktime value allows the transaction to be mined at the current chain height
@@ -124,6 +147,7 @@ export interface WalletServices {
   nLockTimeIsFinal(txOrLockTime: string | number[] | BsvTransaction | number): Promise<boolean>
 }
 
+export type ScriptHashFormat = 'hashLE' | 'hashBE' | 'script'
 export type GetUtxoStatusOutputFormat = 'hashLE' | 'hashBE' | 'script'
 
 export interface BsvExchangeRate {
@@ -139,7 +163,7 @@ export interface FiatExchangeRates {
 }
 
 export interface WalletServicesOptions {
-  chain: sdk.Chain
+  chain: Chain
   taalApiKey?: string
   bitailsApiKey?: string
   whatsOnChainApiKey?: string
@@ -153,6 +177,33 @@ export interface WalletServicesOptions {
   chaintracks?: ChaintracksServiceClient
   arcUrl: string
   arcConfig: ArcConfig
+}
+
+export interface GetStatusForTxidsResult {
+  /**
+   * The name of the service returning these results.
+   */
+  name: string
+  status: 'success' | 'error'
+  /**
+   * The first exception error that occurred during processing, if any.
+   */
+  error?: WalletError
+  results: StatusForTxidResult[]
+}
+
+export interface StatusForTxidResult {
+  txid: string
+  /**
+   * roughly depth of block containing txid from chain tip.
+   */
+  depth: number | undefined
+  /**
+   * 'mined' if depth > 0
+   * 'known' if depth === 0
+   * 'unknown' if depth === undefined, txid may be old an purged or never processed.
+   */
+  status: 'mined' | 'known' | 'unknown'
 }
 
 /**
@@ -175,7 +226,7 @@ export interface GetRawTxResult {
   /**
    * The first exception error that occurred during processing, if any.
    */
-  error?: sdk.WalletError
+  error?: WalletError
 }
 
 /**
@@ -197,9 +248,9 @@ export interface GetMerklePathResult {
   /**
    * The first exception error that occurred during processing, if any.
    */
-  error?: sdk.WalletError
+  error?: WalletError
 
-  notes?: sdk.ReqHistoryNote[]
+  notes?: ReqHistoryNote[]
 }
 
 export interface PostTxResultForTxid {
@@ -231,7 +282,12 @@ export interface PostTxResultForTxid {
 
   data?: object | string | PostTxResultForTxidError
 
-  notes?: sdk.ReqHistoryNote[]
+  notes?: ReqHistoryNote[]
+
+  /**
+   * true iff service was unable to process a potentially valid transaction
+   */
+  serviceError?: boolean
 }
 
 export interface PostTxResultForTxidError {
@@ -256,7 +312,7 @@ export interface PostTxsResult {
    */
   status: 'success' | 'error'
 
-  error?: sdk.WalletError
+  error?: WalletError
 
   txidResults: PostTxResultForTxid[]
 
@@ -265,7 +321,7 @@ export interface PostTxsResult {
    */
   data?: object
 
-  notes?: sdk.ReqHistoryNote[]
+  notes?: ReqHistoryNote[]
 }
 
 export interface GetUtxoStatusDetails {
@@ -308,7 +364,7 @@ export interface GetUtxoStatusResult {
   /**
    * When status is 'error', provides code and description
    */
-  error?: sdk.WalletError
+  error?: WalletError
   /**
    * true if the output is associated with at least one unspent transaction output
    */
@@ -320,6 +376,31 @@ export interface GetUtxoStatusResult {
    * there could be more than one block in which it is a valid utxo.
    */
   details: GetUtxoStatusDetails[]
+}
+
+export interface GetScriptHashHistory {
+  txid: string
+  height?: number
+}
+
+export interface GetScriptHashHistoryResult {
+  /**
+   * The name of the service to which the transaction was submitted for processing
+   */
+  name: string
+  /**
+   * 'success' - the operation was successful, non-error results are valid.
+   * 'error' - the operation failed, error may have relevant information.
+   */
+  status: 'success' | 'error'
+  /**
+   * When status is 'error', provides code and description
+   */
+  error?: WalletError
+  /**
+   * Transaction txid (and height if mined) that consumes the script hash. May not be a complete history.
+   */
+  history: GetScriptHashHistory[]
 }
 
 /**
@@ -371,12 +452,17 @@ export interface BlockHeader extends BaseBlockHeader {
 
 export type GetUtxoStatusService = (
   output: string,
-  outputFormat?: GetUtxoStatusOutputFormat
+  outputFormat?: GetUtxoStatusOutputFormat,
+  outpoint?: string
 ) => Promise<GetUtxoStatusResult>
+
+export type GetStatusForTxidsService = (txids: string[]) => Promise<GetStatusForTxidsResult>
+
+export type GetScriptHashHistoryService = (hash: string) => Promise<GetScriptHashHistoryResult>
 
 export type GetMerklePathService = (txid: string, services: WalletServices) => Promise<GetMerklePathResult>
 
-export type GetRawTxService = (txid: string, chain: sdk.Chain) => Promise<GetRawTxResult>
+export type GetRawTxService = (txid: string, chain: Chain) => Promise<GetRawTxResult>
 
 export type PostTxsService = (beef: Beef, txids: string[], services: WalletServices) => Promise<PostTxsResult>
 

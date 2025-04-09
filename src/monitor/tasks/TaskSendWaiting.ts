@@ -3,19 +3,27 @@ import { verifyTruthy } from '../../utility/index.client'
 import { Monitor } from '../Monitor'
 import { WalletMonitorTask } from './WalletMonitorTask'
 import { attemptToPostReqsToNetwork } from '../../storage/methods/attemptToPostReqsToNetwork'
+import { ProvenTxReqStatus } from '../../sdk'
 
 export class TaskSendWaiting extends WalletMonitorTask {
   static taskName = 'SendWaiting'
 
+  lastSendingRunMsecsSinceEpoch: number | undefined
+  includeSending: boolean = true
+
   constructor(
     monitor: Monitor,
-    public triggerMsecs = 1000 * 60 * 5,
-    public agedMsecs = 0
+    public triggerMsecs = monitor.oneSecond * 8,
+    public agedMsecs = monitor.oneSecond * 7,
+    public sendingMsecs = monitor.oneMinute * 5
   ) {
     super(monitor, TaskSendWaiting.taskName)
   }
 
   trigger(nowMsecsSinceEpoch: number): { run: boolean } {
+    this.includeSending =
+      !this.lastSendingRunMsecsSinceEpoch || nowMsecsSinceEpoch > this.lastSendingRunMsecsSinceEpoch + this.sendingMsecs
+    if (this.includeSending) this.lastSendingRunMsecsSinceEpoch = nowMsecsSinceEpoch
     return {
       run: nowMsecsSinceEpoch > this.lastRunMsecsSinceEpoch + this.triggerMsecs
     }
@@ -26,18 +34,20 @@ export class TaskSendWaiting extends WalletMonitorTask {
     const limit = 100
     let offset = 0
     const agedLimit = new Date(Date.now() - this.agedMsecs)
+    const status: ProvenTxReqStatus[] = this.includeSending ? ['unsent', 'sending'] : ['unsent']
     for (;;) {
-      const reqs = await this.storage.findProvenTxReqs({
+      let reqs = await this.storage.findProvenTxReqs({
         partial: {},
-        status: ['unsent'],
+        status,
         paged: { limit, offset }
       })
+      const count = reqs.length
       if (reqs.length === 0) break
-      log += `${reqs.length} reqs with status 'unsent'\n`
+      log += `${reqs.length} reqs with status ${status.join(' or ')}\n`
       const agedReqs = reqs.filter(req => verifyTruthy(req.updated_at) < agedLimit)
       log += `  Of those reqs, ${agedReqs.length} where last updated before ${agedLimit.toISOString()}.\n`
       log += await this.processUnsent(agedReqs, 2)
-      if (reqs.length < limit) break
+      if (count < limit) break
       offset += limit
     }
     return log
@@ -66,7 +76,7 @@ export class TaskSendWaiting extends WalletMonitorTask {
       const reqApi = reqApis[i]
       log += ' '.repeat(indent)
       log += `${i} reqId=${reqApi.provenTxReqId} attempts=${reqApi.attempts} txid=${reqApi.txid}: \n`
-      if (reqApi.status !== 'unsent') {
+      if (reqApi.status !== 'unsent' && reqApi.status !== 'sending') {
         log += `  status now ${reqApi.status}\n`
         continue
       }

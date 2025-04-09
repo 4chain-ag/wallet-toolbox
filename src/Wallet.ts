@@ -67,19 +67,11 @@ import {
   AtomicBEEF,
   BEEF
 } from '@bsv/sdk'
-import {
-  sdk,
-  toWalletNetwork,
-  Monitor,
-  WalletStorageManager,
-  WalletSigner,
-  randomBytesBase64,
-  ScriptTemplateBRC29
-} from './index.client'
+import * as sdk from './sdk'
 import { acquireDirectCertificate } from './signer/methods/acquireDirectCertificate'
 import { proveCertificate } from './signer/methods/proveCertificate'
-import { createAction } from './signer/methods/createAction'
-import { signAction } from './signer/methods/signAction'
+import { createAction, CreateActionResultX } from './signer/methods/createAction'
+import { signAction, SignActionResultX } from './signer/methods/signAction'
 import { internalizeAction } from './signer/methods/internalizeAction'
 import { WalletSettingsManager } from './WalletSettingsManager'
 import { queryOverlay, transformVerifiableCertificatesWithTrust } from './utility/identityUtils'
@@ -89,8 +81,14 @@ import {
   specOpInvalidChange,
   specOpNoSendActions,
   specOpSetWalletChangeParams,
+  specOpThrowReviewActions,
   specOpWalletBalance
 } from './sdk'
+import { WalletStorageManager } from './storage/WalletStorageManager'
+import { Monitor } from './monitor/Monitor'
+import { WalletSigner } from './signer/WalletSigner'
+import { randomBytesBase64, toWalletNetwork } from './utility/utilityHelpers'
+import { ScriptTemplateBRC29 } from './utility/ScriptTemplateBRC29'
 
 export interface WalletArgs {
   chain: sdk.Chain
@@ -682,6 +680,9 @@ export class Wallet implements WalletInterface, ProtoWallet {
     }
 
     const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateCreateActionArgs)
+
+    if (vargs.labels.indexOf(specOpThrowReviewActions) >= 0) throwDummyReviewActions()
+
     vargs.includeAllSourceTransactions = this.includeAllSourceTransactions
     if (this.randomVals && this.randomVals.length > 1) {
       vargs.randomVals = [...this.randomVals]
@@ -695,13 +696,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
     if (r.tx) r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx)
 
-    if (
-      !vargs.options.acceptDelayedBroadcast &&
-      r.sendWithResults &&
-      r.sendWithResults.length === 1 &&
-      r.sendWithResults[0].status === 'failed'
-    )
-      throw new sdk.WERR_BROADCAST_UNAVAILABLE()
+    if (!vargs.isDelayed) throwIfAnyUnsuccessfulCreateActions(r)
 
     return r
   }
@@ -715,13 +710,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateSignActionArgs)
     const r = await signAction(this, auth, vargs)
 
-    if (
-      !vargs.options.acceptDelayedBroadcast &&
-      r.sendWithResults &&
-      r.sendWithResults.length === 1 &&
-      r.sendWithResults[0].status === 'failed'
-    )
-      throw new sdk.WERR_BROADCAST_UNAVAILABLE()
+    if (!vargs.isDelayed) throwIfAnyUnsuccessfulSignActions(r)
 
     if (r.tx) r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx)
 
@@ -861,21 +850,6 @@ export class Wallet implements WalletInterface, ProtoWallet {
   }
 
   /**
-   * Uses `listOutputs` special operation to compute the total value (of satoshis) for
-   * all spendable outputs in a basket (which defaults to the change 'default' basket).
-   *
-   * @param {string} basket - Optional. Defaults to 'default', the wallet change basket.
-   * @returns {number} sum of output satoshis
-   */
-  async balance(basket: string = 'default'): Promise<number> {
-    const args: ListOutputsArgs = {
-      basket: specOpWalletBalance
-    }
-    const r = await this.listOutputs(args)
-    return r.totalOutputs
-  }
-
-  /**
    * Uses `listOutputs` to iterate over chunks of up to 1000 outputs to
    * compute the sum of output satoshis.
    *
@@ -899,6 +873,20 @@ export class Wallet implements WalletInterface, ProtoWallet {
       offset += change.outputs.length
     }
     return r
+  }
+
+  /**
+   * Uses `listOutputs` special operation to compute the total value (of satoshis) for
+   * all spendable outputs in the 'default' basket.
+   *
+   * @returns {number} sum of output satoshis
+   */
+  async balance(): Promise<number> {
+    const args: ListOutputsArgs = {
+      basket: specOpWalletBalance
+    }
+    const r = await this.listOutputs(args)
+    return r.totalOutputs
   }
 
   /**
@@ -988,4 +976,53 @@ export interface PendingSignAction {
   tx: BsvTransaction
   amount: number
   pdi: PendingStorageInput[]
+}
+
+function throwIfAnyUnsuccessfulCreateActions(r: CreateActionResultX) {
+  const ndrs = r.notDelayedResults
+  const swrs = r.sendWithResults
+
+  if (!ndrs || !swrs || swrs.every(r => r.status === 'unproven')) return
+
+  throw new sdk.WERR_REVIEW_ACTIONS(ndrs, swrs, r.txid, r.tx, r.noSendChange)
+}
+
+function throwIfAnyUnsuccessfulSignActions(r: SignActionResultX) {
+  const ndrs = r.notDelayedResults
+  const swrs = r.sendWithResults
+
+  if (!ndrs || !swrs || swrs.every(r => r.status === 'unproven')) return
+
+  throw new sdk.WERR_REVIEW_ACTIONS(ndrs, swrs, r.txid, r.tx)
+}
+
+/**
+ * Throws a WERR_REVIEW_ACTIONS with a full set of properties to test data formats and propagation.
+ */
+function throwDummyReviewActions() {
+  const b58Beef =
+    'gno9MC7VXii1KoCkc2nsVyYJpqzN3dhBzYATETJcys62emMKfpBof4R7GozwYEaSapUtnNvqQ57aaYYjm3U2dv9eUJ1sV46boHkQgppYmAz9YH8FdZduV8aJayPViaKcyPmbDhEw6UW8TM5iFZLXNs7HBnJHUKCeTdNK4FUEL7vAugxAV9WUUZ43BZjJk2SmSeps9TCXjt1Ci9fKWp3d9QSoYvTpxwzyUFHjRKtbUgwq55ZfkBp5bV2Bpz9qSuKywKewW7Hh4S1nCUScwwzpKDozb3zic1V9p2k8rQxoPsRxjUJ8bjhNDdsN8d7KukFuc3n47fXzdWttvnxwsujLJRGnQbgJuknQqx3KLf5kJXHzwjG6TzigZk2t24qeB6d3hbYiaDr2fFkUJBL3tukTHhfNkQYRXuz3kucVDzvejHyqJaF51mXG8BjMN5aQj91ZJXCaPVqkMWCzmvyaqmXMdRiJdSAynhXbQK91xf6RwdNhz1tg5f9B6oJJMhsi9UYSVymmax8VLKD9AKzBCBDcfyD83m3jyS1VgKGZn3SkQmr6bsoWq88L3GsMnnmYUGogvdAYarTqg3pzkjCMxHzmJBMN6ofnUk8c1sRTXQue7BbyUaN5uZu3KW6CmFsEfpuqVvnqFW93TU1jrPP2S8yz8AexAnARPCKE8Yz7RfVaT6RCavwQKL3u5iookwRWEZXW1QWmM37yJWHD87SjVynyg327a1CLwcBxmE2CB48QeNVGyQki4CTQMqw2o8TMhDPJej1g68oniAjBcxBLSCs7KGvK3k7AfrHbCMULX9CTibYhCjdFjbsbBoocqJpxxcvkMo1fEEiAzZuiBVZQDYktDdTVbhKHvYkW25HcYX75NJrpNAhm7AjFeKLzEVxqAQkMfvTufpESNRZF4kQqg2Rg8h2ajcKTd5cpEPwXCrZLHm4EaZEmZVbg3QNfGhn7BJu1bHMtLqPD4y8eJxm2uGrW6saf6qKYmmu64F8A667NbD4yskPRQ1S863VzwGpxxmgLc1Ta3R46jEqsAoRDoZVUaCgBBZG3Yg1CTgi1EVBMXU7qvY4n3h8o2FLCEMWY4KadnV3iD4FbcdCmg4yxBosNAZgbPjhgGjCimjh4YsLd9zymGLmivmz2ZBg5m3xaiXT9NN81X9C1JUujd'
+  const beef = Beef.fromBinary(Utils.fromBase58(b58Beef))
+  const btx = beef.txs.slice(-1)[0]
+  const txid = btx.txid
+  debugger
+  throw new sdk.WERR_REVIEW_ACTIONS(
+    [
+      {
+        txid, // only care that it is syntactically a txid
+        status: 'doubleSpend',
+        competingTxs: [txid], // a txid in the beef
+        competingBeef: beef.toBinary()
+      }
+    ],
+    [
+      {
+        txid,
+        status: 'failed'
+      }
+    ],
+    txid,
+    beef.toBinaryAtomic(txid),
+    [`${txid}.0`]
+  )
 }

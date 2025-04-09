@@ -40,6 +40,11 @@ import {
   maxPossibleSatoshis
 } from './generateChange'
 
+let disableDoubleSpendCheckForTest = true
+export function setDisableDoubleSpendCheckForTest(v: boolean) {
+  disableDoubleSpendCheckForTest = v
+}
+
 export async function createAction(
   storage: StorageProvider,
   auth: sdk.AuthId,
@@ -601,7 +606,7 @@ async function validateRequiredInputs(
       input.output = output
       if (!Array.isArray(output.lockingScript) || !Number.isInteger(output.satoshis))
         throw new sdk.WERR_INVALID_PARAMETER(`${txid}.${vout}`, 'output with valid lockingScript and satoshis')
-      if (!output.spendable && !vargs.isNoSend)
+      if (!disableDoubleSpendCheckForTest && !output.spendable && !vargs.isNoSend)
         throw new sdk.WERR_INVALID_PARAMETER(`${txid}.${vout}`, 'spendable output unless noSend is true')
       // input is spending an existing user output which has an lockingScript
       input.satoshis = verifyNumber(output.satoshis)

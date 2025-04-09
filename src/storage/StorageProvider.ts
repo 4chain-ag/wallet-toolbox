@@ -302,12 +302,16 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
     return r
   }
 
-  async updateTransactionsStatus(transactionIds: number[], status: sdk.TransactionStatus): Promise<void> {
+  async updateTransactionsStatus(
+    transactionIds: number[],
+    status: sdk.TransactionStatus,
+    trx?: sdk.TrxToken
+  ): Promise<void> {
     await this.transaction(async trx => {
       for (const id of transactionIds) {
         await this.updateTransactionStatus(status, id, undefined, undefined, trx)
       }
-    })
+    }, trx)
   }
 
   /**
@@ -596,23 +600,16 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
         spendable: true
       }
       const outputs = await this.findOutputs({ partial: where })
+      const services = this.getServices()
       for (let i = outputs.length - 1; i >= 0; i--) {
         const o = outputs[i]
         const oid = verifyId(o.outputId)
         if (o.spendable) {
           let ok = false
           if (o.lockingScript && o.lockingScript.length > 0) {
-            const r = await this.getServices().getUtxoStatus(asString(o.lockingScript), 'script')
-            if (r.status === 'success' && r.isUtxo && r.details?.length > 0) {
-              const tx = await this.findTransactionById(o.transactionId)
-              if (
-                tx &&
-                tx.txid &&
-                r.details.some(d => d.txid === tx.txid && d.satoshis === o.satoshis && d.index === o.vout)
-              ) {
-                ok = true
-              }
-            }
+            const hash = services.hashOutputScript(asString(o.lockingScript))
+            const r = await services.getUtxoStatus(hash, undefined, `${o.txid}.${o.vout}`)
+            if (r.isUtxo === true) ok = true
           }
           if (!ok) invalidSpendableOutputs.push(o)
         }

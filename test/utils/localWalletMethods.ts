@@ -6,26 +6,39 @@ import {
   OutpointString,
   P2PKH,
   PublicKey,
-  SignActionArgs
+  Script,
+  SignActionArgs,
+  SignActionOptions,
+  SignActionResult
 } from '@bsv/sdk'
-import { EntityProvenTxReq, sdk, wait } from '../../../src'
-import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
-import { parseWalletOutpoint, validateCreateActionArgs, ValidCreateActionArgs } from '../../../src/sdk'
+import { EntityProvenTxReq, ScriptTemplateBRC29, sdk, StorageKnex, verifyOne, verifyTruthy, wait } from '../../src'
+import { _tu, logger, TestWalletNoSetup } from './TestUtilsWalletStorage'
+import { validateCreateActionArgs, ValidCreateActionArgs } from '../../src/sdk'
+import { setDisableDoubleSpendCheckForTest } from '../../src/storage/methods/createAction'
 
-const setActiveClient = true
-const useMySQLConnectionForClient = true
-const useTestIdentityKey = true
-const useIdentityKey2 = false
+export interface LocalWalletTestOptions {
+  setActiveClient: boolean
+  useMySQLConnectionForClient: boolean
+  useTestIdentityKey: boolean
+  useIdentityKey2: boolean
+}
 
-export async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> {
+export interface LocalTestWalletSetup extends TestWalletNoSetup {
+  setActiveClient: boolean
+  useMySQLConnectionForClient: boolean
+  useTestIdentityKey: boolean
+  useIdentityKey2: boolean
+}
+
+export async function createSetup(chain: sdk.Chain, options: LocalWalletTestOptions): Promise<LocalTestWalletSetup> {
   const env = _tu.getEnv(chain)
   let identityKey: string | undefined
   let filePath: string | undefined
-  if (useTestIdentityKey) {
+  if (options.useTestIdentityKey) {
     identityKey = env.testIdentityKey
     filePath = env.testFilePath
   } else {
-    if (useIdentityKey2) {
+    if (options.useIdentityKey2) {
       identityKey = env.identityKey2
     } else {
       identityKey = env.identityKey
@@ -35,14 +48,17 @@ export async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> 
   if (!identityKey) throw new sdk.WERR_INVALID_PARAMETER('identityKey', 'valid')
   if (!filePath) filePath = `./backup-${chain}-${identityKey}.sqlite`
 
-  const setup = await _tu.createTestWallet({
-    chain,
-    rootKeyHex: env.devKeys[identityKey],
-    filePath,
-    setActiveClient,
-    addLocalBackup: false,
-    useMySQLConnectionForClient
-  })
+  const setup = {
+    ...options,
+    ...(await _tu.createTestWallet({
+      chain,
+      rootKeyHex: env.devKeys[identityKey],
+      filePath,
+      setActiveClient: options.setActiveClient,
+      addLocalBackup: false,
+      useMySQLConnectionForClient: options.useMySQLConnectionForClient
+    }))
+  }
 
   console.log(`ACTIVE STORAGE: ${setup.storage.getActiveStoreName()}`)
 
@@ -50,7 +66,7 @@ export async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> 
 }
 
 export async function burnOneSatTestOutput(
-  setup: TestWalletNoSetup,
+  setup: LocalTestWalletSetup,
   options: CreateActionOptions = {},
   howMany: number = 1
 ): Promise<void> {
@@ -97,7 +113,7 @@ export async function burnOneSatTestOutput(
 }
 
 export async function createOneSatTestOutput(
-  setup: TestWalletNoSetup,
+  setup: LocalTestWalletSetup,
   options: CreateActionOptions = {},
   howMany: number = 1
 ): Promise<CreateActionResult> {
@@ -168,7 +184,7 @@ export async function createOneSatTestOutput(
   return car
 }
 
-export async function recoverOneSatTestOutputs(setup: TestWalletNoSetup): Promise<void> {
+export async function recoverOneSatTestOutputs(setup: LocalTestWalletSetup): Promise<void> {
   const outputs = await setup.wallet.listOutputs({
     basket: 'test-output',
     include: 'entire transactions',
@@ -210,7 +226,7 @@ export async function recoverOneSatTestOutputs(setup: TestWalletNoSetup): Promis
   }
 }
 
-export async function trackReqByTxid(setup: TestWalletNoSetup, txid: string): Promise<void> {
+export async function trackReqByTxid(setup: LocalTestWalletSetup, txid: string): Promise<void> {
   const req = await EntityProvenTxReq.fromStorageTxid(setup.activeStorage, txid)
 
   expect(req !== undefined && req.history.notes !== undefined)
@@ -241,4 +257,70 @@ export async function trackReqByTxid(setup: TestWalletNoSetup, txid: string): Pr
     await req.refreshFromStorage(setup.activeStorage)
     lastHeight = height
   }
+}
+
+/**
+ * This method will normally throw an error on the initial createAction call due to the output being doublespent
+ * @param setup
+ * @param options
+ * @returns
+ */
+export async function doubleSpendOldChange(
+  setup: LocalTestWalletSetup,
+  options: SignActionOptions
+): Promise<SignActionResult> {
+  const auth = await setup.wallet.storage.getAuth(true)
+  if (!auth.userId || !setup.wallet.storage.getActive().isStorageProvider)
+    throw new Error('active must be StorageProvider')
+  const s = setup.wallet.storage.getActive() as StorageKnex
+
+  const o = verifyOne(
+    await s.findOutputs({ partial: { userId: auth.userId!, spendable: false, change: true }, paged: { limit: 1 } })
+  )
+  await s.validateOutputScript(o)
+  const lockingScript = Script.fromBinary(o.lockingScript!)
+  const otx = verifyTruthy(await s.findTransactionById(o.transactionId))
+  if (otx.status !== 'completed') throw new Error('output must be from completed transaction')
+  const inputBEEF = (await s.getBeefForTransaction(o.txid!, {})).toBinary()
+
+  logger(`spending ${o.txid} vout ${o.vout}`)
+
+  const sabppp = new ScriptTemplateBRC29({
+    derivationPrefix: o.derivationPrefix,
+    derivationSuffix: o.derivationSuffix,
+    keyDeriver: setup.wallet.keyDeriver
+  })
+  const args: CreateActionArgs = {
+    inputBEEF,
+    inputs: [
+      {
+        unlockingScriptLength: 108,
+        outpoint: `${o.txid!}.${o.vout}`,
+        inputDescription: 'spent change output'
+      }
+    ],
+    description: 'intentional doublespend',
+    options
+  }
+  let car: CreateActionResult
+  try {
+    setDisableDoubleSpendCheckForTest(true)
+    car = await setup.wallet.createAction(args)
+  } finally {
+    setDisableDoubleSpendCheckForTest(false)
+  }
+  expect(car.signableTransaction)
+
+  const st = car.signableTransaction!
+  const beef = Beef.fromBinary(st.tx)
+  const tx = beef.findAtomicTransaction(beef.txs.slice(-1)[0].txid)!
+  const unlock = sabppp.unlock(setup.rootKey.toHex(), setup.identityKey, o.satoshis, lockingScript)
+  const unlockingScript = (await unlock.sign(tx, 0)).toHex()
+  const signArgs: SignActionArgs = {
+    reference: st.reference,
+    spends: { '0': { unlockingScript } },
+    options
+  }
+  const sar = await setup.wallet.signAction(signArgs)
+  return sar
 }

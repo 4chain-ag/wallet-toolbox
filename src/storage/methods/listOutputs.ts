@@ -72,21 +72,15 @@ const basketToSpecOp: Record<string, ListOutputsSpecOp> = {
       outputs: TableOutput[]
     ): Promise<TableOutput[]> => {
       const filteredOutputs: TableOutput[] = []
+      const services = s.getServices()
       for (const o of outputs) {
         await s.validateOutputScript(o)
         let ok: boolean | undefined = false
         let r: sdk.GetUtxoStatusResult
         if (o.lockingScript && o.lockingScript.length > 0) {
-          r = await s.getServices().getUtxoStatus(asString(o.lockingScript), 'script')
-          if (r.status === 'success' && r.isUtxo && r.details?.length > 0) {
-            if (r.details.some(d => d.txid === o.txid && d.satoshis === o.satoshis && d.index === o.vout)) {
-              ok = true
-            } else {
-              ok = false
-            }
-          } else {
-            ok = false
-          }
+          const hash = services.hashOutputScript(asString(o.lockingScript))
+          r = await services.getUtxoStatus(hash, undefined, `${o.txid}.${o.vout}`)
+          ok = r.isUtxo
         } else {
           ok = undefined
         }
@@ -216,14 +210,14 @@ export async function listOutputs(
         isDeleted: false
       })
       .whereNotNull('outputTagId')
-      .whereIn('tag', vargs.tags)
+      .whereIn('tag', tags)
       .select('outputTagId')
     const r = await q
     tagIds = r.map(r => r.outputTagId!)
   }
 
   const isQueryModeAll = vargs.tagQueryMode === 'all'
-  if (isQueryModeAll && tagIds.length < vargs.tags.length) return r
+  if (isQueryModeAll && tagIds.length < tags.length) return r
 
   const columns: string[] = [
     'outputId',

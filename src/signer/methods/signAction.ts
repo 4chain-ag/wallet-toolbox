@@ -1,14 +1,30 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { Beef, Transaction as BsvTransaction, SignActionResult, SignActionSpend } from '@bsv/sdk'
+import {
+  AtomicBEEF,
+  Beef,
+  Transaction as BsvTransaction,
+  SendWithResult,
+  SignActionResult,
+  SignActionSpend,
+  TXIDHexString
+} from '@bsv/sdk'
 import { asBsvSdkScript, PendingSignAction, ScriptTemplateBRC29, sdk, Wallet } from '../../index.client'
 import { processAction } from './createAction'
+import { ReviewActionResult } from '../../sdk/WalletStorage.interfaces'
+
+export interface SignActionResultX extends SignActionResult {
+  txid?: TXIDHexString
+  tx?: AtomicBEEF
+  sendWithResults?: SendWithResult[]
+  notDelayedResults?: ReviewActionResult[]
+}
 
 export async function signAction(
   wallet: Wallet,
   auth: sdk.AuthId,
   vargs: sdk.ValidSignActionArgs
-): Promise<SignActionResult> {
+): Promise<SignActionResultX> {
   const prior = wallet.pendingSignActions[vargs.reference]
   if (!prior)
     throw new sdk.WERR_NOT_IMPLEMENTED('recovery of out-of-session signAction reference data is not yet implemented.')
@@ -16,12 +32,13 @@ export async function signAction(
 
   prior.tx = await completeSignedTransaction(prior, vargs.spends, wallet)
 
-  const sendWithResults = await processAction(prior, wallet, auth, vargs)
+  const { sendWithResults, notDelayedResults } = await processAction(prior, wallet, auth, vargs)
 
-  const r: SignActionResult = {
+  const r: SignActionResultX = {
     txid: prior.tx.id('hex'),
     tx: vargs.options.returnTXIDOnly ? undefined : makeAtomicBeef(prior.tx, prior.dcr.inputBeef),
-    sendWithResults
+    sendWithResults,
+    notDelayedResults
   }
 
   return r

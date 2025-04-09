@@ -25,7 +25,8 @@ import {
   verifyOneOrNone,
   verifyTruthy
 } from '../../index.client'
-import { ProvenTxReqNonTerminalStatus } from '../../sdk'
+import { ReviewActionResult, ProvenTxReqNonTerminalStatus, StorageGetBeefOptions } from '../../sdk'
+import { PostReqsToNetworkDetails } from './attemptToPostReqsToNetwork'
 
 export async function processAction(
   storage: StorageProvider,
@@ -54,13 +55,47 @@ export async function processAction(
     }
   }
 
-  const swr = await shareReqsWithWorld(storage, userId, txidsOfReqsToShareWithWorld, args.isDelayed)
+  const { swr, ndr } = await shareReqsWithWorld(storage, userId, txidsOfReqsToShareWithWorld, args.isDelayed)
 
   r.sendWithResults = swr
+  r.notDelayedResults = ndr
 
   stampLog(args.log, `end storage processActionSdk`)
 
   return r
+}
+
+export interface GetReqsAndBeefDetail {
+  txid: string
+  req?: TableProvenTxReq
+  proven?: TableProvenTx
+  status: 'readyToSend' | 'alreadySent' | 'error' | 'unknown'
+  error?: string
+}
+
+export interface GetReqsAndBeefResult {
+  beef: Beef
+  details: GetReqsAndBeefDetail[]
+}
+
+export interface PostBeefResultForTxidApi {
+  txid: string
+
+  /**
+   * 'success' - The transaction was accepted for processing
+   */
+  status: 'success' | 'error'
+
+  /**
+   * if true, the transaction was already known to this service. Usually treat as a success.
+   *
+   * Potentially stop posting to additional transaction processors.
+   */
+  alreadyKnown?: boolean
+
+  blockHash?: string
+  blockHeight?: number
+  merklePath?: string
 }
 
 /**
@@ -78,8 +113,11 @@ async function shareReqsWithWorld(
   userId: number,
   txids: string[],
   isDelayed: boolean
-): Promise<SendWithResult[]> {
-  if (txids.length < 1) return []
+): Promise<{ swr: SendWithResult[]; ndr: ReviewActionResult[] | undefined }> {
+  let swr: SendWithResult[] = []
+  let ndr: ReviewActionResult[] | undefined = undefined
+
+  if (txids.length < 1) return { swr, ndr }
 
   // Collect what we know about these sendWith transaction txids from storage.
   const r = await storage.getReqsAndBeefToShareWithWorld(txids, [])
@@ -87,13 +125,28 @@ async function shareReqsWithWorld(
   // Initialize aggregate results for each txid
   const ars: {
     txid: string
+    status: SendWithResultStatus
     getReq: GetReqsAndBeefDetail
-    postBeef?: sdk.PostTxResultForTxid
+    postReq?: PostReqsToNetworkDetails
+    ndr?: ReviewActionResult
   }[] = []
-  for (const getReq of r.details) ars.push({ txid: getReq.txid, getReq })
+
+  const readyToSendReqs: EntityProvenTxReq[] = []
+  for (const getReq of r.details) {
+    let status: SendWithResultStatus = 'failed'
+    if (getReq.status === 'alreadySent') status = 'unproven'
+    else if (getReq.status === 'readyToSend') {
+      status = 'sending'
+      readyToSendReqs.push(new EntityProvenTxReq(getReq.req!))
+    }
+    ars.push({
+      txid: getReq.txid,
+      getReq,
+      status
+    })
+  }
 
   // Filter original txids down to reqIds that are available and need sending
-  const readyToSendReqs = r.details.filter(d => d.status === 'readyToSend').map(d => new EntityProvenTxReq(d.req!))
   const readyToSendReqIds = readyToSendReqs.map(r => r.id)
   const transactionIds = readyToSendReqs.map(r => r.notify.transactionIds || []).flat()
 
@@ -115,11 +168,11 @@ async function shareReqsWithWorld(
         await storage.updateTransaction(transactionIds, { status: 'sending' }, trx)
       })
     }
-    return createSendWithResults()
+    return createResults()
   }
 
   if (readyToSendReqIds.length < 1) {
-    return createSendWithResults()
+    return createResults()
   }
 
   if (batch) {
@@ -132,41 +185,53 @@ async function shareReqsWithWorld(
   // Handle the NON-DELAYED-SEND-NOW case
   //
   const prtn = await storage.attemptToPostReqsToNetwork(readyToSendReqs)
+
   // merge the individual PostBeefResultForTxid results to postBeef in aggregate results.
   for (const ar of ars) {
-    const d = prtn.details.find(d => d.txid === ar.txid)
-    if (d) {
-      ar.postBeef = d.pbrft
-      if (d.pbrft.status === 'error' && ar.getReq.req) {
-        // If the immediate (un-delayed) broadcast attempt APPEARS to fail,
-        // fall back to delayed sending and tracking to make sure transaction
-        // gets tracked if it is valid and floating around the network...
-        const req = await EntityProvenTxReq.fromStorageId(storage, ar.getReq.req.provenTxReqId)
-        if (req.status === 'unprocessed') {
-          req.status = 'unsent'
-          await req.updateStorageDynamicProperties(storage)
-        }
-      }
+    const txid = ar.txid
+    const d = prtn.details.find(d => d.txid === txid)
+    if (!d) throw new sdk.WERR_INTERNAL(`missing details for ${txid}`)
+    ar.ndr = { txid: d.txid, status: 'success', competingTxs: d.competingTxs }
+    switch (d.status) {
+      case 'success':
+        // processing network has accepted this transaction
+        ar.status = 'unproven'
+        break
+      case 'doubleSpend':
+        // confirmed double spend.
+        ar.status = 'failed'
+        ar.ndr.status = 'doubleSpend'
+        if (d.competingTxs) ar.ndr.competingBeef = await createMergedBeefOfTxids(d.competingTxs, storage)
+        break
+      case 'serviceError':
+        // services might improve
+        ar.status = 'sending'
+        ar.ndr.status = 'serviceError'
+        break
+      case 'invalidTx':
+        // nothing will fix this transaction
+        ar.status = 'failed'
+        ar.ndr.status = 'invalidTx'
+        break
+      case 'unknown':
+      case 'invalid':
+      default:
+        throw new sdk.WERR_INTERNAL(`processAction with notDelayed status ${d.status} should not occur.`)
     }
   }
 
-  const rs = createSendWithResults()
+  return createResults()
 
-  return rs
-
-  function createSendWithResults(): SendWithResult[] {
-    const rs: SendWithResult[] = []
+  function createResults(): { swr: SendWithResult[]; ndr: ReviewActionResult[] | undefined } {
+    swr = []
+    ndr = isDelayed ? undefined : []
     for (const ar of ars) {
-      let status: SendWithResultStatus = 'failed'
-      if (ar.getReq.status === 'alreadySent') status = 'unproven'
-      else if (ar.getReq.status === 'readyToSend' && (isDelayed || ar.postBeef?.status === 'success'))
-        status = 'sending'
-      rs.push({
-        txid: ar.txid,
-        status
-      })
+      swr.push({ txid: ar.txid, status: ar.status })
+      if (ar.ndr && ndr) {
+        ndr.push(ar.ndr)
+      }
     }
-    return rs
+    return { swr, ndr }
   }
 }
 
@@ -385,35 +450,14 @@ async function commitNewTxToStorage(
   return r
 }
 
-export interface GetReqsAndBeefDetail {
-  txid: string
-  req?: TableProvenTxReq
-  proven?: TableProvenTx
-  status: 'readyToSend' | 'alreadySent' | 'error' | 'unknown'
-  error?: string
-}
-
-export interface GetReqsAndBeefResult {
-  beef: Beef
-  details: GetReqsAndBeefDetail[]
-}
-
-export interface PostBeefResultForTxidApi {
-  txid: string
-
-  /**
-   * 'success' - The transaction was accepted for processing
-   */
-  status: 'success' | 'error'
-
-  /**
-   * if true, the transaction was already known to this service. Usually treat as a success.
-   *
-   * Potentially stop posting to additional transaction processors.
-   */
-  alreadyKnown?: boolean
-
-  blockHash?: string
-  blockHeight?: number
-  merklePath?: string
+async function createMergedBeefOfTxids(txids: string[], storage: StorageProvider): Promise<number[]> {
+  const beef = new Beef()
+  const options: StorageGetBeefOptions = {
+    mergeToBeef: beef,
+    ignoreNewProven: true
+  }
+  for (const txid of txids) {
+    await storage.getBeefForTransaction(txid, options)
+  }
+  return beef.toBinary()
 }

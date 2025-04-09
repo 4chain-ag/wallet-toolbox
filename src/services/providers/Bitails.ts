@@ -62,7 +62,7 @@ export class Bitails {
       raws.push(rawTx)
     }
 
-    const r = await this.postRaws(raws)
+    const r = await this.postRaws(raws, txids)
 
     r.notes!.unshift(note)
     if (r.status !== 'success') r.notes!.push({ ...nne(), what: 'postBeefError' })
@@ -73,9 +73,10 @@ export class Bitails {
 
   /**
    * @param raws Array of raw transactions to broadcast as hex strings
+   * @param txids Array of txids for transactions in raws for which results are requested, remaining raws are supporting only.
    * @returns
    */
-  async postRaws(raws: HexString[]): Promise<sdk.PostBeefResult> {
+  async postRaws(raws: HexString[], txids?: string[]): Promise<sdk.PostBeefResult> {
     const r: sdk.PostBeefResult = {
       name: 'BitailsPostRaws',
       status: 'success',
@@ -83,13 +84,19 @@ export class Bitails {
       notes: []
     }
 
+    const rawTxids: string[] = []
+
     for (const raw of raws) {
       const txid = Utils.toHex(doubleSha256BE(Utils.toArray(raw, 'hex')))
-      r.txidResults.push({
-        txid,
-        status: 'success',
-        notes: []
-      })
+      // Results aren't always identified by txid.
+      rawTxids.push(txid)
+      if (!txids || txids.indexOf(txid) >= 0) {
+        r.txidResults.push({
+          txid,
+          status: 'success',
+          notes: []
+        })
+      }
     }
 
     const headers = this.getHttpHeaders()
@@ -120,26 +127,52 @@ export class Bitails {
       if (response.ok) {
         // status: 201, statusText: 'Created'
         const btrs: BitailsPostRawsResult[] = response.data
-        for (const rt of r.txidResults) {
-          const btr = btrs.find(btr => (btr.txid = rt.txid))
-          const txid = rt.txid
-          if (!btr) {
-            rt.status = 'error'
-            rt.notes!.push({ ...nne(), what: 'postRawsMissingResult', txid })
-          } else if (btr.error) {
-            // code: -25, message: 'missing-inputs'
-            // code: -27, message: 'already-in-mempool'
-            const { code, message } = btr.error
-            if (code === -27) {
-              rt.notes!.push({ ...nne(), what: 'postRawsSuccessAlreadyInMempool' })
-            } else {
-              rt.status = 'error'
-              rt.notes!.push({ ...nne(), what: 'postRawsError', txid, code, message })
+        if (btrs.length !== raws.length) {
+          r.status = 'error'
+          r.notes!.push({ ...nne(), what: 'postRawsErrorResultsCount' })
+        } else {
+          // Check that each response result has a txid that matches corresponding rawTxids
+          let i = -1
+          for (const btr of btrs) {
+            i++
+            if (!btr.txid) {
+              btr.txid = rawTxids[i]
+              r.notes!.push({ ...nn(), what: 'postRawsResultMissingTxids', i, rawsTxid: rawTxids[i] })
+            } else if (btr.txid !== rawTxids[i]) {
+              r.status = 'error'
+              r.notes!.push({ ...nn(), what: 'postRawsResultTxids', i, txid: btr.txid, rawsTxid: rawTxids[i] })
             }
-          } else {
-            rt.notes!.push({ ...nn(), what: 'postRawsSuccess' })
           }
-          if (rt.status !== 'success' && r.status === 'success') r.status = 'error'
+          if (r.status === 'success') {
+            // btrs has correct number of results and each one has expected txid.
+            // focus on results for requested txids
+            for (const rt of r.txidResults) {
+              const btr = btrs.find(btr => btr.txid! === rt.txid)!
+              const txid = rt.txid
+              if (btr.error) {
+                // code: -25, message: 'missing-inputs'
+                // code: -27, message: 'already-in-mempool'
+                const { code, message } = btr.error
+                if (code === -27) {
+                  rt.notes!.push({ ...nne(), what: 'postRawsSuccessAlreadyInMempool' })
+                } else {
+                  rt.status = 'error'
+                  if (code === -25) {
+                    rt.doubleSpend = true // this is a possible double spend attempt
+                    rt.competingTxs = undefined // not provided with any data for this.
+                    rt.notes!.push({ ...nne(), what: 'postRawsErrorMissingInputs' })
+                  } else if ((btr['code'] as string) === 'ECONNRESET') {
+                    rt.notes!.push({ ...nne(), what: 'postRawsErrorECONNRESET', txid, message })
+                  } else {
+                    rt.notes!.push({ ...nne(), what: 'postRawsError', txid, code, message })
+                  }
+                }
+              } else {
+                rt.notes!.push({ ...nn(), what: 'postRawsSuccess' })
+              }
+              if (rt.status !== 'success' && r.status === 'success') r.status = 'error'
+            }
+          }
         }
       } else {
         r.status = 'error'
@@ -205,7 +238,7 @@ export class Bitails {
 }
 
 interface BitailsPostRawsResult {
-  txid: string
+  txid?: string
   error?: {
     code: number
     message: string

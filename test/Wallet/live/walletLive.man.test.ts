@@ -389,13 +389,10 @@ async function confirmSpendableOutputs(
 
       if (o.spendable) {
         let ok = false
-
         if (o.lockingScript && o.lockingScript.length > 0) {
           const r = await services.getUtxoStatus(asString(o.lockingScript), 'script')
-
           if (r.status === 'success' && r.isUtxo && r.details?.length > 0) {
             const tx = await storage.findTransactionById(o.transactionId)
-
             if (
               tx &&
               tx.txid &&

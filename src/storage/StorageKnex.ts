@@ -1,4 +1,4 @@
-import { ListActionsArgs, ListActionsResult, ListOutputsArgs, ListOutputsResult } from '@bsv/sdk'
+import { ListActionsResult, ListOutputsResult } from '@bsv/sdk'
 import { sdk, verifyOne, verifyOneOrNone, verifyTruthy } from '../index.all'
 import {
   KnexMigrations,
@@ -293,11 +293,15 @@ export class StorageKnex extends StorageProvider implements sdk.WalletStoragePro
   }
 
   override async insertOutput(output: TableOutput, trx?: sdk.TrxToken): Promise<number> {
-    const e = await this.validateEntityForInsert(output, trx)
-    if (e.outputId === 0) delete e.outputId
-    const [id] = await this.toDb(trx)<TableOutput>('outputs').insert(e)
-    output.outputId = id
-    return output.outputId
+    try {
+      const e = await this.validateEntityForInsert(output, trx)
+      if (e.outputId === 0) delete e.outputId
+      const [id] = await this.toDb(trx)<TableOutput>('outputs').insert(e)
+      output.outputId = id
+      return output.outputId
+    } catch (e) {
+      throw e
+    }
   }
 
   override async insertOutputTag(tag: TableOutputTag, trx?: sdk.TrxToken): Promise<number> {

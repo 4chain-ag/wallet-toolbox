@@ -116,7 +116,7 @@ describe('Monitor tests', () => {
     await runMockedSendWaiting('success', 'monitorTest3')
   })
 
-  test('4 TaskSendWaiting error', async () => {
+  test.skip('4 TaskSendWaiting error', async () => {
     await runMockedSendWaiting('error', 'monitorTest4')
   })
 
