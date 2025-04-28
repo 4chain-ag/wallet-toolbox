@@ -10,69 +10,7 @@ import { TableOutputX, TableTransaction, TableTxLabel } from '../index.client'
 import { asString, sdk, verifyOne } from '../../index.client'
 import { StorageKnex } from '../StorageKnex'
 import { isListActionsSpecOp } from '../../sdk'
-
-interface ListActionsSpecOp {
-  name: string
-  /**
-   * undefined to intercept no labels from vargs,
-   * empty array to intercept all labels,
-   * or an explicit array of labels to intercept.
-   */
-  labelsToIntercept?: string[]
-  setStatusFilter?: () => string[]
-  postProcess?: (
-    s: StorageKnex,
-    auth: sdk.AuthId,
-    vargs: sdk.ValidListActionsArgs,
-    specOpLabels: string[],
-    txs: Partial<TableTransaction>[]
-  ) => Promise<void>
-}
-
-const labelToSpecOp: Record<string, ListActionsSpecOp> = {
-  [sdk.specOpNoSendActions]: {
-    name: 'noSendActions',
-    labelsToIntercept: ['abort'],
-    setStatusFilter: () => ['nosend'],
-    postProcess: async (
-      s: StorageKnex,
-      auth: sdk.AuthId,
-      vargs: sdk.ValidListActionsArgs,
-      specOpLabels: string[],
-      txs: Partial<TableTransaction>[]
-    ): Promise<void> => {
-      if (specOpLabels.indexOf('abort') >= 0) {
-        for (const tx of txs) {
-          if (tx.status === 'nosend') {
-            await s.abortAction(auth, { reference: tx.reference! })
-            tx.status = 'failed'
-          }
-        }
-      }
-    }
-  },
-  [sdk.specOpFailedActions]: {
-    name: 'failedActions',
-    labelsToIntercept: ['unfail'],
-    setStatusFilter: () => ['failed'],
-    postProcess: async (
-      s: StorageKnex,
-      auth: sdk.AuthId,
-      vargs: sdk.ValidListActionsArgs,
-      specOpLabels: string[],
-      txs: Partial<TableTransaction>[]
-    ): Promise<void> => {
-      if (specOpLabels.indexOf('unfail') >= 0) {
-        for (const tx of txs) {
-          if (tx.status === 'failed') {
-            await s.updateTransaction(tx.transactionId!, { status: 'unfail' })
-            // wallet wire does not support 'unfail' status, return as 'failed'.
-          }
-        }
-      }
-    }
-  }
-}
+import { getLabelToSpecOp, ListActionsSpecOp } from './ListActionsSpecOp'
 
 export async function listActions(
   storage: StorageKnex,
@@ -94,7 +32,7 @@ export async function listActions(
   let labels: string[] = []
   for (const label of vargs.labels) {
     if (isListActionsSpecOp(label)) {
-      specOp = labelToSpecOp[label]
+      specOp = getLabelToSpecOp()[label]
     } else {
       labels.push(label)
     }

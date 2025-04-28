@@ -38,7 +38,7 @@ import {
  * For details of the API implemented, follow the "See also" link for the `WalletStorageProvider` interface.
  */
 export class StorageClient implements sdk.WalletStorageProvider {
-  private readonly endpointUrl: string
+  readonly endpointUrl: string
   private readonly authClient: AuthFetch
   private nextId = 1
 
@@ -507,7 +507,7 @@ export class StorageClient implements sdk.WalletStorageProvider {
       const val = entity[key]
       if (val === null) {
         entity[key] = undefined
-      } else if (Buffer.isBuffer(val)) {
+      } else if (val instanceof Uint8Array) {
         entity[key] = Array.from(val)
       }
     }

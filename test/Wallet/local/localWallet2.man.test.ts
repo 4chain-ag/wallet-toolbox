@@ -1,9 +1,10 @@
-import { WalletOutput } from '@bsv/sdk'
+import { Beef, PrivateKey, SignActionArgs, WalletOutput } from '@bsv/sdk'
 import { sdk, Services, Setup, StorageKnex, TableUser } from '../../../src'
 import { _tu, TuEnv } from '../../utils/TestUtilsWalletStorage'
 import { specOpInvalidChange, ValidListOutputsArgs, WERR_REVIEW_ACTIONS } from '../../../src/sdk'
 import {
   burnOneSatTestOutput,
+  createMainReviewSetup,
   createOneSatTestOutput,
   createSetup,
   doubleSpendOldChange,
@@ -28,6 +29,8 @@ describe('localWallet2 tests', () => {
 
   test('0 monitor runOnce', async () => {
     const setup = await createSetup(chain, options)
+    const log = await setup.monitor.runTask('UnFail')
+    if (log) console.log(log)
     await setup.monitor.runOnce()
     await setup.wallet.destroy()
   })
@@ -40,7 +43,7 @@ describe('localWallet2 tests', () => {
 
   test('1 recover 1 sat outputs', async () => {
     const setup = await createSetup(chain, options)
-    await recoverOneSatTestOutputs(setup)
+    await recoverOneSatTestOutputs(setup, 1)
     await setup.wallet.destroy()
   })
 
@@ -146,7 +149,7 @@ describe('localWallet2 tests', () => {
 
   test('6 review and unfail false doubleSpends', async () => {
     const { env, storage, services } = await createMainReviewSetup()
-    let offset = 900
+    let offset = 1100
     const limit = 100
     let allUnfails: number[] = []
     for (;;) {
@@ -200,26 +203,75 @@ describe('localWallet2 tests', () => {
     }
     await storage.destroy()
   })
-})
 
-async function createMainReviewSetup(): Promise<{
-  env: TuEnv
-  storage: StorageKnex
-  services: Services
-}> {
-  const env = _tu.getEnv('main')
-  const knex = Setup.createMySQLKnex(process.env.MAIN_CLOUD_MYSQL_CONNECTION!)
-  const storage = new StorageKnex({
-    chain: env.chain,
-    knex: knex,
-    commissionSatoshis: 0,
-    commissionPubKeyHex: undefined,
-    feeModel: { model: 'sat/kb', value: 1 }
+  test('8 Beef verifier', async () => {
+    const setup = await createSetup(chain, options)
+    // replace bb with beef to test
+    const bb = new Beef().toBinary()
+    const beef = Beef.fromBinary(bb)
+    console.log(beef.toLogString())
+    const ok = await beef.verify(await setup.services.getChainTracker())
+    await setup.wallet.destroy()
   })
-  const servicesOptions = Services.createDefaultOptions(env.chain)
-  if (env.whatsonchainApiKey) servicesOptions.whatsOnChainApiKey = env.whatsonchainApiKey
-  const services = new Services(servicesOptions)
-  storage.setServices(services)
-  await storage.makeAvailable()
-  return { env, storage, services }
-}
+
+  test.skip('9 received payment from wif and outpoint', async () => {
+    const setup = await createSetup(chain, options)
+    console.log(`active store ${setup.wallet.storage.getActiveStore()}`)
+    if (!setup.wallet.storage.isActiveEnabled) throw new Error('Active storage is not enabled.')
+
+    const pk = PrivateKey.fromWif('L4ZRWA...Nw4Brt8rvJLRZegPF2oiBKJaxUgr4e')
+    const outpoint = { txid: '5e2965a50618425af21bebddb9aa60c3e12f64c8e1eb44b6589273455a9760e9', vout: 0 }
+    const address = pk.toAddress()
+    console.log(`address: ${address.toString()}`)
+
+    const inputBEEF = await setup.activeStorage.getBeefForTransaction(outpoint.txid, { ignoreStorage: true })
+    const btx = inputBEEF.findTxid(outpoint.txid)
+    const satoshis = btx!.tx!.outputs[0]!.satoshis!
+
+    const unlock = Setup.getUnlockP2PKH(pk, satoshis)
+
+    const label = 'inputBrayden257'
+
+    const car = await setup.wallet.createAction({
+      inputBEEF: inputBEEF.toBinary(),
+      inputs: [
+        {
+          outpoint: `${outpoint.txid}.${outpoint.vout}`,
+          unlockingScriptLength: 108,
+          inputDescription: label
+        }
+      ],
+      labels: [label],
+      description: label
+    })
+
+    const st = car.signableTransaction!
+    const beef = Beef.fromBinary(st.tx)
+    const tx = beef.findAtomicTransaction(beef.txs.slice(-1)[0].txid)!
+    tx.inputs[0].unlockingScriptTemplate = unlock
+    await tx.sign()
+    const unlockingScript = tx.inputs[0].unlockingScript!.toHex()
+
+    const signArgs: SignActionArgs = {
+      reference: st.reference,
+      spends: { 0: { unlockingScript } },
+      options: {
+        acceptDelayedBroadcast: false
+      }
+    }
+
+    const sar = await setup.wallet.signAction(signArgs)
+
+    {
+      const beef = Beef.fromBinary(sar.tx!)
+      const txid = sar.txid!
+
+      console.log(`
+BEEF
+${beef.toHex()}
+${beef.toLogString()}
+`)
+    }
+    await setup.wallet.destroy()
+  })
+})

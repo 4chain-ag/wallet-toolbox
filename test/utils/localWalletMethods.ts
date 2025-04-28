@@ -11,8 +11,18 @@ import {
   SignActionOptions,
   SignActionResult
 } from '@bsv/sdk'
-import { EntityProvenTxReq, ScriptTemplateBRC29, sdk, StorageKnex, verifyOne, verifyTruthy, wait } from '../../src'
-import { _tu, logger, TestWalletNoSetup } from './TestUtilsWalletStorage'
+import {
+  EntityProvenTxReq,
+  ScriptTemplateBRC29,
+  sdk,
+  Services,
+  Setup,
+  StorageKnex,
+  verifyOne,
+  verifyTruthy,
+  wait
+} from '../../src'
+import { _tu, logger, TestWalletNoSetup, TuEnv } from './TestUtilsWalletStorage'
 import { validateCreateActionArgs, ValidCreateActionArgs } from '../../src/sdk'
 import { setDisableDoubleSpendCheckForTest } from '../../src/storage/methods/createAction'
 
@@ -184,18 +194,23 @@ export async function createOneSatTestOutput(
   return car
 }
 
-export async function recoverOneSatTestOutputs(setup: LocalTestWalletSetup): Promise<void> {
+export async function recoverOneSatTestOutputs(setup: LocalTestWalletSetup, testOptionsMode?: 1): Promise<void> {
   const outputs = await setup.wallet.listOutputs({
     basket: 'test-output',
     include: 'entire transactions',
     limit: 1000
   })
 
-  if (outputs.outputs.length > 8) {
+  if (outputs.outputs.length > 0) {
     const args: CreateActionArgs = {
       inputBEEF: outputs.BEEF!,
       inputs: [],
       description: 'recover test output'
+    }
+    if (testOptionsMode === 1) {
+      args.options = {
+        acceptDelayedBroadcast: false
+      }
     }
     const p2pkh = new P2PKH()
     for (const o of outputs.outputs) {
@@ -323,4 +338,26 @@ export async function doubleSpendOldChange(
   }
   const sar = await setup.wallet.signAction(signArgs)
   return sar
+}
+
+export async function createMainReviewSetup(): Promise<{
+  env: TuEnv
+  storage: StorageKnex
+  services: Services
+}> {
+  const env = _tu.getEnv('main')
+  const knex = Setup.createMySQLKnex(process.env.MAIN_CLOUD_MYSQL_CONNECTION!)
+  const storage = new StorageKnex({
+    chain: env.chain,
+    knex: knex,
+    commissionSatoshis: 0,
+    commissionPubKeyHex: undefined,
+    feeModel: { model: 'sat/kb', value: 1 }
+  })
+  const servicesOptions = Services.createDefaultOptions(env.chain)
+  if (env.whatsonchainApiKey) servicesOptions.whatsOnChainApiKey = env.whatsonchainApiKey
+  const services = new Services(servicesOptions)
+  storage.setServices(services)
+  await storage.makeAvailable()
+  return { env, storage, services }
 }

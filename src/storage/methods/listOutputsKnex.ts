@@ -2,127 +2,7 @@ import { Beef, ListOutputsResult, OriginatorDomainNameStringUnder250Bytes, Walle
 import { TableOutput, TableOutputBasket, TableOutputTag } from '../index.client'
 import { asString, sdk, verifyId, verifyInteger, verifyOne } from '../../index.client'
 import { StorageKnex } from '../StorageKnex'
-import { ValidListOutputsArgs } from '../../sdk'
-
-interface ListOutputsSpecOp {
-  name: string
-  useBasket?: string
-  ignoreLimit?: boolean
-  includeOutputScripts?: boolean
-  resultFromTags?: (
-    s: StorageKnex,
-    auth: sdk.AuthId,
-    vargs: ValidListOutputsArgs,
-    specOpTags: string[]
-  ) => Promise<ListOutputsResult>
-  resultFromOutputs?: (
-    s: StorageKnex,
-    auth: sdk.AuthId,
-    vargs: ValidListOutputsArgs,
-    specOpTags: string[],
-    outputs: TableOutput[]
-  ) => Promise<ListOutputsResult>
-  filterOutputs?: (
-    s: StorageKnex,
-    auth: sdk.AuthId,
-    vargs: ValidListOutputsArgs,
-    specOpTags: string[],
-    outputs: TableOutput[]
-  ) => Promise<TableOutput[]>
-  /**
-   * undefined to intercept no tags from vargs,
-   * empty array to intercept all tags,
-   * or an explicit array of tags to intercept.
-   */
-  tagsToIntercept?: string[]
-  /**
-   * How many positional tags to intercept.
-   */
-  tagsParamsCount?: number
-}
-
-const basketToSpecOp: Record<string, ListOutputsSpecOp> = {
-  [sdk.specOpWalletBalance]: {
-    name: 'totalOutputsIsWalletBalance',
-    useBasket: 'default',
-    ignoreLimit: true,
-    resultFromOutputs: async (
-      s: StorageKnex,
-      auth: sdk.AuthId,
-      vargs: ValidListOutputsArgs,
-      specOpTags: string[],
-      outputs: TableOutput[]
-    ): Promise<ListOutputsResult> => {
-      let totalOutputs = 0
-      for (const o of outputs) totalOutputs += o.satoshis
-      return { totalOutputs, outputs: [] }
-    }
-  },
-  [sdk.specOpInvalidChange]: {
-    name: 'invalidChangeOutputs',
-    useBasket: 'default',
-    ignoreLimit: true,
-    includeOutputScripts: true,
-    tagsToIntercept: ['release', 'all'],
-    filterOutputs: async (
-      s: StorageKnex,
-      auth: sdk.AuthId,
-      vargs: ValidListOutputsArgs,
-      specOpTags: string[],
-      outputs: TableOutput[]
-    ): Promise<TableOutput[]> => {
-      const filteredOutputs: TableOutput[] = []
-      const services = s.getServices()
-      for (const o of outputs) {
-        await s.validateOutputScript(o)
-        let ok: boolean | undefined = false
-        let r: sdk.GetUtxoStatusResult
-        if (o.lockingScript && o.lockingScript.length > 0) {
-          const hash = services.hashOutputScript(asString(o.lockingScript))
-          r = await services.getUtxoStatus(hash, undefined, `${o.txid}.${o.vout}`)
-          ok = r.isUtxo
-        } else {
-          ok = undefined
-        }
-        if (ok === false) {
-          filteredOutputs.push(o)
-        }
-      }
-      if (specOpTags.indexOf('release') >= 0) {
-        for (const o of filteredOutputs) {
-          await s.updateOutput(o.outputId, { spendable: false })
-          o.spendable = false
-        }
-      }
-      return filteredOutputs
-    }
-  },
-  [sdk.specOpSetWalletChangeParams]: {
-    name: 'setWalletChangeParams',
-    tagsParamsCount: 2,
-    resultFromTags: async (
-      s: StorageKnex,
-      auth: sdk.AuthId,
-      vargs: ValidListOutputsArgs,
-      specOpTags: string[]
-    ): Promise<ListOutputsResult> => {
-      if (specOpTags.length !== 2)
-        throw new sdk.WERR_INVALID_PARAMETER('numberOfDesiredUTXOs and minimumDesiredUTXOValue', 'valid')
-      const numberOfDesiredUTXOs: number = verifyInteger(Number(specOpTags[0]))
-      const minimumDesiredUTXOValue: number = verifyInteger(Number(specOpTags[1]))
-      const basket = verifyOne(
-        await s.findOutputBaskets({
-          partial: { userId: verifyId(auth.userId), name: 'default' }
-        })
-      )
-      await s.updateOutputBasket(basket.basketId, {
-        numberOfDesiredUTXOs,
-        minimumDesiredUTXOValue
-      })
-      return { totalOutputs: 0, outputs: [] }
-    }
-  }
-}
+import { getBasketToSpecOp, ListOutputsSpecOp } from './ListOutputsSpecOp'
 
 export async function listOutputs(
   dsk: StorageKnex,
@@ -159,7 +39,7 @@ export async function listOutputs(
   const basketsById: Record<number, TableOutputBasket> = {}
   if (vargs.basket) {
     let b = vargs.basket
-    specOp = basketToSpecOp[b]
+    specOp = getBasketToSpecOp()[b]
     b = specOp ? (specOp.useBasket ? specOp.useBasket : '') : b
     if (b) {
       const baskets = await dsk.findOutputBaskets({
@@ -217,7 +97,13 @@ export async function listOutputs(
   }
 
   const isQueryModeAll = vargs.tagQueryMode === 'all'
-  if (isQueryModeAll && tagIds.length < tags.length) return r
+  if (isQueryModeAll && tagIds.length < tags.length)
+    // all the required tags don't exist, impossible to satisfy.
+    return r
+
+  if (!isQueryModeAll && tagIds.length === 0 && tags.length > 0)
+    // any and only non-existing labels, impossible to satisfy.
+    return r
 
   const columns: string[] = [
     'outputId',
@@ -236,7 +122,7 @@ export async function listOutputs(
   ]
 
   const noTags = tagIds.length === 0
-  const includeSpent = false
+  const includeSpent = specOp && specOp.includeSpent ? specOp.includeSpent : false
 
   const txStatusOk = `(select status as tstatus from transactions where transactions.transactionId = outputs.transactionId) in ('completed', 'unproven', 'nosend')`
   const txStatusOkCteq = `(select status as tstatus from transactions where transactions.transactionId = o.transactionId) in ('completed', 'unproven', 'nosend')`
