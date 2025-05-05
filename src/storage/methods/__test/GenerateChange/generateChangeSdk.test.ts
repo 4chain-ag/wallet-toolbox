@@ -10,9 +10,46 @@ import {
   GenerateChangeSdkParams,
   GenerateChangeSdkResult
 } from '../../generateChange'
+import {WERR_INSUFFICIENT_FUNDS} from "../../../../sdk";
 
 describe('generateChange tests', () => {
   jest.setTimeout(99999999)
+
+  test('spike test', async () => {
+    const params: GenerateChangeSdkParams = {
+      fixedInputs: [],
+      fixedOutputs: [
+        // { satoshis: 666666, lockingScriptLength: 197 },
+        { satoshis: 599799, lockingScriptLength: 197 },
+        { satoshis: 200, lockingScriptLength: 25 }
+      ],
+      feeModel: { model: 'sat/kb', value: 2 },
+      changeInitialSatoshis: 1000,
+      changeFirstSatoshis: 285,
+      changeLockingScriptLength: 25,
+      changeUnlockingScriptLength: 107,
+      targetNetCount: 1,
+      randomVals: [...randomValsUsed1],
+      noLogging: false
+    }
+    const availableChange: GenerateChangeSdkChangeInput[] = [
+      { satoshis: 6_00_001, outputId: 14101 },
+      // { satoshis: 667867, outputId: 14101 },
+    ]
+
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
+
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
+    // expect(r.changeOutputs.length).toBe(30)
+    const a: any = r
+    a.changesCount = r.changeOutputs.length
+
+    expect(JSON.stringify(a)).toBe(
+      '{"allocatedChangeInputs":[{"satoshis":535280,"outputId":14146,"spendable":false},{"satoshis":160865,"outputId":14142,"spendable":false}],"changeOutputs":[{"satoshis":29277,"lockingScriptLength":25}],"size":580,"fee":2,"satsPerKb":2}'
+    )
+    expectTransactionSize(params, r)
+  })
+
 
   test('0 two outputs', async () => {
     const params: GenerateChangeSdkParams = {
@@ -1006,7 +1043,8 @@ const defParams: GenerateChangeSdkParams = {
   changeFirstSatoshis: 285,
   changeLockingScriptLength: 25,
   changeUnlockingScriptLength: 107,
-  randomVals: [...randomValsUsed1]
+  randomVals: [...randomValsUsed1],
+  noLogging: false
 }
 
 const _defAvailableChange: GenerateChangeSdkChangeInput[] = [
