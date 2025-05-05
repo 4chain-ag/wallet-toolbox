@@ -216,6 +216,8 @@ export async function generateChangeSdk(
         return true
       }
 
+
+      // from-do: looks like this is a main code responsible for utxo selection and change output creation
       for (;;) {
         // This is the starvation loop, drops change outputs one at a time if unable to fund them...
         await releaseAllocatedChangeInputs()

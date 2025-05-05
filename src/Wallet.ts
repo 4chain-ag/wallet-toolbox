@@ -676,7 +676,23 @@ export class Wallet implements WalletInterface, ProtoWallet {
     sdk.validateOriginator(originator)
 
     if (!args.options) args.options = {}
+    //from-do: If `known`, input transactions may omit supporting validity proof data for TXIDs known to this wallet or included in `knownTxids`.
     args.options.trustSelf ||= this.trustSelf
+
+    /**
+     * from-do: When working with large chained transactions using `noSend` and `sendWith` options, include TXIDs of inputs that may be assumed to be valid even if not already known by this wallet.
+     *
+     * getKnownTxids() updates the beef which is BeefParty
+     *
+     * The wallet creates a `BeefParty` when it is created.
+     * All the Beefs that pass through the wallet are merged into this beef.
+     * Thus what it contains at any time is the union of all transactions and proof data processed.
+     * The class `BeefParty` derives from `Beef`, adding the ability to track the source of merged data.
+     *
+     * This allows it to generate beefs to send to a particular “party” (storage or the user)
+     * that includes “txid only proofs” for transactions they already know about.
+     * Over time, this allows an active wallet to drastically reduce the amount of data transmitted.
+     */
     if (this.autoKnownTxids && !args.options.knownTxids) {
       args.options.knownTxids = this.getKnownTxids(args.options.knownTxids)
     }
@@ -686,9 +702,12 @@ export class Wallet implements WalletInterface, ProtoWallet {
     if (vargs.labels.indexOf(specOpThrowReviewActions) >= 0) throwDummyReviewActions()
 
     vargs.includeAllSourceTransactions = this.includeAllSourceTransactions
+
+    // from-do: looks like some kind of hack for testing 😳
     if (this.randomVals && this.randomVals.length > 1) {
       vargs.randomVals = [...this.randomVals]
     }
+
 
     const r = await createAction(this, auth, vargs)
 

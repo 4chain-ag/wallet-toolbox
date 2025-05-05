@@ -58,6 +58,7 @@ export async function createAction(
     // with a new transaction. It's an error if we have no new inputs or outputs...
     throw new sdk.WERR_INTERNAL()
 
+  // from-do: below are steps to create an action
   /**
    * Steps to create a transaction:
    * - Verify that all inputs either have proof in vargs.inputBEEF or that options.trustSelf === 'known' and input txid.vout are known valid to storage.
@@ -74,9 +75,12 @@ export async function createAction(
    */
 
   const userId = auth.userId!
+  // TODO: analyze
   const { storageBeef, beef, xinputs } = await validateRequiredInputs(storage, userId, vargs)
+  // TODO: analyze
   const xoutputs = validateRequiredOutputs(storage, userId, vargs)
 
+  // from-do: default basket is named 'default'
   const changeBasketName = 'default'
   const changeBasket = verifyOne(
     await storage.findOutputBaskets({
@@ -87,10 +91,12 @@ export async function createAction(
 
   const noSendChangeIn = await validateNoSendChange(storage, userId, vargs, changeBasket)
 
+  // from-do: count number of UTXO with tx status 'completed', 'unproven'
   const availableChangeCount = await storage.countChangeInputs(userId, changeBasket.basketId, !vargs.isDelayed)
 
   const feeModel = validateStorageFeeModel(storage.feeModel)
 
+  // from-do: inserts new transaction with status 'unsigned'
   const newTx = await createNewTxRecord(storage, userId, vargs, storageBeef)
 
   const ctx: CreateTransactionSdkContext = {
@@ -103,9 +109,12 @@ export async function createAction(
     transactionId: newTx.transactionId!
   }
 
+  // from-do: preparing inputs and change outputs, brace yourselves: magic & dragons inside
+  // They selects the inputs (from outputs table) one by one, and updates them as spent by this transaction
   const { allocatedChange, changeOutputs, derivationPrefix, maxPossibleSatoshisAdjustment } =
     await fundNewTransactionSdk(storage, userId, vargs, ctx)
 
+  // from-do: whaaaat? WTF??????
   if (maxPossibleSatoshisAdjustment) {
     const a = maxPossibleSatoshisAdjustment
     if (ctx.xoutputs[a.fixedOutputIndex].satoshis !== maxPossibleSatoshis) throw new sdk.WERR_INTERNAL()
